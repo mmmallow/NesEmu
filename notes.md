@@ -59,7 +59,7 @@
     polling cycle.
 
 * *Start Up:* A, X, and Y are initialized to 0. The PC starts out at 0xFFFC (RESET Vector). Stack pointer
-  starts out at 0x01FD. C, Z, D, V, and N flags start as 0. 
+  starts out at 0x01FD. C, Z, D, V, and N flags start as 0. I is set to 1
 
 * Game programmer chooses the addressing mode
 

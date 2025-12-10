@@ -3,7 +3,7 @@
 #include <fstream>
 
 int main(int argc, char* argv[]) {
-    std::string file_name(argv[1]);
+    /*std::string file_name(argv[1]);
 
     std::ifstream file;
     file.open(file_name, std::ios::binary);
@@ -20,7 +20,14 @@ int main(int argc, char* argv[]) {
         std::cout << "Byte " << i << ": " << std::hex << (int)b << std::endl;
     }
 
-    file.close();
+    file.close();*/
+
+    char ram[0x10000] = {0};
+    std::cout << ram[0xFFFF] << std::endl;
+
+    unsigned char t = '(';
+    t += ')';
+    std::cout << t << std::endl;
 
     return 0;
 }
