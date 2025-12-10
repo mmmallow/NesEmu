@@ -63,7 +63,7 @@
 
 * Game programmer chooses the addressing mode
 
-* Programmer also sets the RESET vector (located at 0xFFFC & 0xFFFD as a 16-bit address) which tells
+* Programmer also sets the RESET vector (located at 0xFFFC & 0xFFFD as a 16-bit address, LB-HB) which tells
   the CPU where in memory to set the Program Counter and start executing.
 
 * Definitely want the whole thing to be at least semi-modular, makes for easier testing and
@@ -74,4 +74,9 @@
 * Create the CPU class with some basic instructions
 * Write a simple program into memory (don't forget to set the RESET vector) that adds 2 numbers
   (stored in x and y) and puts the result in the accumulator
+* As far as clock cycles go, don't worry about for now, but once ready to implement:
+  * Clock takes about 601 ns per cycle, so want a while loop where the time in ns is checked at the beginning,
+  * Then the cpu does one instruction thing and the time is checked again in ns to see how long it needs
+    to wait before running the next instruction
+  * This should also allow for control over checking for interrupts and synchronization with the PPU.
 
