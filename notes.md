@@ -37,6 +37,7 @@
     * V = Overflow, tracks overflows for signed operations
     * 1 = Not used, always set to 1
     * B = Break, tracks whether an interrupt was signaled by a break instruction or hardware
+    * D = Decimal, not used in the NES
     * I = Interrupt Disable, enables/disables certain interrupts, 2 instructions to set or clear this bit
     * Z = Zero, set whenever the result is 0, often used to check if two values are equal (A - B == 0)
     * C = Carry (unsigned overflow), set whenever the result of an unsigned operation is bigger than 255

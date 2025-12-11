@@ -5,11 +5,12 @@
 #include <tuple>
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 class CPU;
 
-typedef uint8_t u8;
-typedef uint16_t u16;
+typedef unsigned char u8;
+typedef unsigned short u16;
 
 // Function pointer for instruction set
 typedef void (CPU::*Fp)(u8);
@@ -22,7 +23,17 @@ typedef void (CPU::*Fp)(u8);
 * X & Y = General purpose registers
 * PC = Program Counter
 * S = Stack Pointer
-* P = Status Flags
+* 
+* Status Flags: In the NES this is a register, P, but for simplicity
+* and saving the trouble of doing bitwise operations, just doing boolean flags.
+*
+* N = Negative
+* Z = Zero
+* V = Overflow
+* B = Break
+* I = Interrupt Disable
+* C = Carry
+*
 *
 * Even though the NES is an 8-bit console, it has a 16-bit address space
 * and several addressing modes. 
@@ -47,17 +58,22 @@ class CPU {
     u16 PC;
     // Stack pointer
     u8 S;
-    // Status Reg
-    u8 P;
+    // Status Flags
+    bool N;
+    bool V;
+    bool B;
+    bool I;
+    bool Z;
+    bool C;
 
     // Memory
-    u8 mem[0x10000] = {0};
+    u8* mem;
 
     // Cycle #
     int cycle;
 
     // Current Cycle Time
-    std::chrono::time_point<std::chrono::system_clock> current_cycle_time;
+    std::chrono::time_point<std::chrono::system_clock> current_cycle_time = std::chrono::high_resolution_clock::now();
 
     void advanceNClockCycles (int n);
 
@@ -65,6 +81,7 @@ class CPU {
     // Load Accumulator
     // Stores either the value given or the value at
     // the mem address given based on the addressing mode.
+    // Sets the N and Z flags.
     void lda(u8 mode);
 
     // Add w/ Carry
@@ -76,7 +93,7 @@ class CPU {
 
 
 
-    /************* Instruction Enum ***************
+    /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
     * to the instruction methods and u8's for the addressing modes
     * of that specific instruction. Each index corresponds to the 
