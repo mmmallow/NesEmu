@@ -2,9 +2,17 @@
 #define _CPU_H_
 
 #include <cstdint>
+#include <tuple>
+#include <chrono>
+#include <thread>
+
+class CPU;
 
 typedef uint8_t u8;
-typedef unsigned short u16;
+typedef uint16_t u16;
+
+// Function pointer for instruction set
+typedef void (CPU::*Fp)(u8);
 
 /****************************************************************************
 * CPU class emulates the CPU (duh). The NES has a 6502 processor
@@ -45,18 +53,38 @@ class CPU {
     // Memory
     u8 mem[0x10000] = {0};
 
-    /*********** Instructions ***********/
+    // Cycle #
+    int cycle;
+
+    // Current Cycle Time
+    std::chrono::time_point<std::chrono::system_clock> current_cycle_time;
+
+    void advanceNClockCycles (int n);
+
+    /*********** Instruction Methods ***********/
     // Load Accumulator
     // Stores either the value given or the value at
     // the mem address given based on the addressing mode.
-    void lda(u8 mode, u8 value);
+    void lda(u8 mode);
 
     // Add w/ Carry
     // Adds either the value given or the value at the 
     // mem address given (addressing mode) to the accumulator
     // along with the carry bit of the status register.
     // A + M + C -> A, C
-    void adc(u8 mode, u8 value);
+    void adc(u8 mode);
+
+
+
+    /************* Instruction Enum ***************
+    * The instructions array holds tuples of function pointers
+    * to the instruction methods and u8's for the addressing modes
+    * of that specific instruction. Each index corresponds to the 
+    * instruction at the location in the instruction table
+    * at https://www.masswerk.at/6502/6502_instruction_set.html
+    * **********************************************/
+
+    std::tuple<Fp, u8> instructions[256];
 };
 
 #endif // _CPU_H_
