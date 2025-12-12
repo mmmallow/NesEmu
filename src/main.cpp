@@ -5,6 +5,7 @@
 void Test() {
     ldaTest t;
     t.IndirectX();
+    t.ZeroPage();
 }
 
 int main (int argc, char* argv[]) {
