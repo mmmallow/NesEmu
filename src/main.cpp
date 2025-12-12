@@ -6,6 +6,12 @@ void Test() {
     ldaTest t;
     t.IndirectX();
     t.ZeroPage();
+    t.Immediate();
+    t.Absolute();
+    t.IndirectY();
+    t.ZeroPageX();
+    t.AbsoluteY();
+    t.AbsoluteX();
 }
 
 int main (int argc, char* argv[]) {
