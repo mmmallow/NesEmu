@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
     t += ')';
     std::cout << t << std::endl;*/
 
+    /*
     enum inst { LDA, NUM_FUNCS };
     Fp instructions[NUM_FUNCS];
 
@@ -46,6 +47,12 @@ int main(int argc, char* argv[]) {
 
     std::cout << "LDA: " << LDA << std::endl;
     instructions[LDA](1, 16);
+    */
+
+    unsigned char t = 254;
+    t += 3;
+
+    std::cout << (int)t << std::endl;
 
     return 0;
 }

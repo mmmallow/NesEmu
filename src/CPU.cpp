@@ -1,6 +1,6 @@
 #include "CPU.h"
 
-CPU::CPU()
+CPU::CPU (u8 prg_start_low, u8 prg_start_high)
 : A(0),
   X(0),
   Y(0),
@@ -18,34 +18,23 @@ CPU::CPU()
 
     // Test program to add two numbers together
     // Start at 0x0001
+    /*
     mem[0xFFFC] = 1;
     mem[0xFFFD] = 0;
     
-    /*
     // lda #$10
     mem[1] = 0xa9;
     mem[2] = 0x0a;
-    */
-
-    /*
-    // lda $10
-    mem[1] = 0xa5;
-    mem[2] = 0x0a;
-    */
-
-    /*
-    // adc #$10
-    A = 20;
-    mem[1] = 0x69;
-    mem[2] = 0x0a;
-    */
 
     // adc $10;
-    A = 20;
-    mem[1] = 0x65;
-    mem[2] = 0x0a;
+    mem[3] = 0x65;
+    mem[4] = 0x0a;
 
     mem[10] = 5;
+    */
+
+    mem[0xFFFC] = prg_start_low;
+    mem[0xFFFD] = prg_start_high;
 
     init();
 }
@@ -65,8 +54,15 @@ void CPU::init() {
 
 
     // Initialize the instruction set
-    instructions[0xa9] = std::make_tuple(&CPU::lda, 2);
+    instructions[0xa1] = std::make_tuple(&CPU::lda, 0);
     instructions[0xa5] = std::make_tuple(&CPU::lda, 1);
+    instructions[0xa9] = std::make_tuple(&CPU::lda, 2);
+    instructions[0xad] = std::make_tuple(&CPU::lda, 3);
+    instructions[0xb1] = std::make_tuple(&CPU::lda, 4);
+    instructions[0xb5] = std::make_tuple(&CPU::lda, 5);
+    instructions[0xb9] = std::make_tuple(&CPU::lda, 6);
+    instructions[0xbd] = std::make_tuple(&CPU::lda, 7);
+
 
     instructions[0x65] = std::make_tuple(&CPU::adc, 1);
     instructions[0x69] = std::make_tuple(&CPU::adc, 2);
@@ -93,15 +89,19 @@ void CPU::lda (u8 mode) {
     u16 high_byte;
     u16 low_byte;
     u16 value;
+    u8 zp_address;
     switch (mode) {
         // Indirect, X: 
         case 0:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
+            // lda ($70,X)
+            // Load the contents of the address stored at $70+X and $70+1+X into A
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address + X];
+            high_byte = mem[zp_address + X + 1];
             high_byte = high_byte << 8;
             value = high_byte | low_byte;
-            A = mem[value + X];
-            advanceNClockCycles(5);
+            A = mem[value];
+            advanceNClockCycles(6);
             break;
         // Zero Page
         case 1:
@@ -115,14 +115,65 @@ void CPU::lda (u8 mode) {
             A = value;
             advanceNClockCycles(2);
             break;
+        // Absolute
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = mem[value];
+            advanceNClockCycles(4);
+            break;
+        // Indirect, Y
+        case 4:
+            // lda ($70),Y
+            // Add Y to the address stored at $70 and $70+1, then store the contents of the resulting
+            // address in A
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address];
+            high_byte = mem[zp_address+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = mem[value+Y];
+            advanceNClockCycles(5);
+            break;
+        // Zero Page, X
+        case 5:
+            value = mem[++PC];
+            // Cast value to a u8 so values will wrap around to beginning of Zero Page
+            A = mem[(u8)value + X];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, Y
+        case 6:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = mem[value + Y];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, X
+        case 7:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = mem[value + X];
+            advanceNClockCycles(4);
+            break;           
     }
     PC++;
     // Set Status flags
-    if (A == 0)
+    if (A == 0) {
         Z = 1;
+        N = 0;
+    }
     // Largest bit is set
-    else if (A >= 128)
+    else if (A >= 128) {
         N = 1;
+        Z = 0;
+    }
     else {
         Z = 0;
         N = 0;

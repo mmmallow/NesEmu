@@ -42,7 +42,7 @@ typedef void (CPU::*Fp)(u8);
 class CPU {
     public:
     
-    CPU();
+    CPU(u8 prg_start_low, u8 prg_start_high);
     ~CPU();
     
     // Sets the PC to the correct memory address to run the loaded program

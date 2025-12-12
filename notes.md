@@ -1,7 +1,7 @@
 
 # CPU Gameplan & Notes
 
-> General idea is to initialize CPU then read from .nes file which acts like ROM. First 16 KB
+> General idea is to initialize CPU then read from .nes file which acts like ROM. First 16 B
 > are header, rest is game data. From there, interpret the instruction data using functions modeling
 > the instruction set. Have RAM structure using array. Probably need to look into addressing modes
 > and other more nuanced things, but for now just do the basics.
@@ -80,4 +80,21 @@
   * Then the cpu does one instruction thing and the time is checked again in ns to see how long it needs
     to wait before running the next instruction
   * This should also allow for control over checking for interrupts and synchronization with the PPU.
+
+## Instruction Notes
+
+### LDA
+
+| Addressing | Op Code (Hex) | Op Code (B) | Bytes | Cycles |
+|------------|---------------|-------------|-------|--------|
+| Immediate  |      A9       |  101 010 01 |   2   |    2   |
+| Zero Page  |      A5       |  101 001 01 |   2   |    3   |
+| Zero Pg, X |      B5       |  101 101 01 |   2   |    4   |
+| Absolute   |      AD       |  101 011 01 |   3   |    4   |
+| Absolute,X |      BD       |  101 111 01 |   3   |    4   |
+| Absolute,Y |      B9       |  101 110 01 |   3   |    4   |
+| Indirect,X |      A1       |  101 000 01 |   2   |    6   |
+| Indirect,Y |      B1       |  101 100 01 |   2   |    5   |
+
+
 
