@@ -54,6 +54,7 @@ void CPU::init() {
 
 
     // Initialize the instruction set
+    // LDA
     instructions[0xa1] = std::make_tuple(&CPU::lda, 0);
     instructions[0xa5] = std::make_tuple(&CPU::lda, 1);
     instructions[0xa9] = std::make_tuple(&CPU::lda, 2);
@@ -63,9 +64,15 @@ void CPU::init() {
     instructions[0xb9] = std::make_tuple(&CPU::lda, 6);
     instructions[0xbd] = std::make_tuple(&CPU::lda, 7);
 
-
+    // ADC
+    instructions[0x61] = std::make_tuple(&CPU::adc, 0);
     instructions[0x65] = std::make_tuple(&CPU::adc, 1);
     instructions[0x69] = std::make_tuple(&CPU::adc, 2);
+    instructions[0x6d] = std::make_tuple(&CPU::adc, 3);
+    instructions[0x71] = std::make_tuple(&CPU::adc, 4);
+    instructions[0x75] = std::make_tuple(&CPU::adc, 5);
+    instructions[0x79] = std::make_tuple(&CPU::adc, 6);
+    instructions[0x7d] = std::make_tuple(&CPU::adc, 7);
 }
 
 void CPU::advanceNClockCycles (int n) {
@@ -185,8 +192,19 @@ void CPU::adc (u8 mode) {
     u16 high_byte;
     u16 low_byte;
     u16 value;
+    u8 zp_address;
     switch (mode) {
+        // Indirect, X
         case 0:
+            // adc ($70,X)
+            // Add the contents of the address stored at $70+X and $70+1+X with A and C
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address + X];
+            high_byte = mem[zp_address + X + 1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A + mem[value] + C;
+            advanceNClockCycles(6);
             break;
         // Zero Page
         case 1:
@@ -200,20 +218,75 @@ void CPU::adc (u8 mode) {
             A = A + value + C;
             advanceNClockCycles(2);
             break;
+        // Absolute
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A + mem[value] + C;
+            advanceNClockCycles(4);
+            break;
+        // Indirect, Y
+        case 4:
+            // adc ($70),Y
+            // Add Y to the address stored at $70 and $70+1, then add the contents of the resulting
+            // address to A and C
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address];
+            high_byte = mem[zp_address+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A + mem[value+Y] + C;
+            advanceNClockCycles(5);
+            break;
+        // Zero Page, X
+        case 5:
+            value = mem[++PC];
+            // Cast value to a u8 so values will wrap around to beginning of Zero Page
+            A = A + mem[(u8)value + X] + C;
+            advanceNClockCycles(4);
+            break;
+        // Absolute, Y
+        case 6:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A + mem[value + Y] + C;
+            advanceNClockCycles(4);
+            break;
+        // Absolute, X
+        case 7:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A + mem[value + X] + C;
+            advanceNClockCycles(4);
+            break;
     }
     PC++;
-    if (A == 0)
+    if (A == 0) {
         Z = 1;
-    else if (A >= 128)
+        N = 0;
+        
+    }
+    else if (A >= 128) {
         N = 1;
-    else if ((A - value + C) + value + C >= 256) {
-        V = 1;
-        C = 1;
+        Z = 0;
     }
     else {
         Z = 0;
         N = 0;
-        C = 0;
+    }
+
+    if ((A - value + C) + value + C >= 256) {
+        V = 1;
+        C = 1;
+    }
+    else {
         V = 0;
+        C = 0;
     }
 }

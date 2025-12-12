@@ -3,7 +3,7 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    ldaTest t;
+    adcTest t;
     t.IndirectX();
     t.ZeroPage();
     t.Immediate();
