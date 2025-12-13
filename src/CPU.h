@@ -91,6 +91,12 @@ class CPU {
     // A + M + C -> A, C
     void adc(u8 mode);
 
+    // And
+    // Bitwise ands either the value given or the value at the
+    // mem address given with the accumulator, then stores
+    // the result in the accumulator.
+    // A AND M -> A
+    void AND(u8 mode);
 
 
     /************* Instruction Set ***************
