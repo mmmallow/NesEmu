@@ -90,6 +90,14 @@ void CPU::init() {
     instructions[0x0E] = std::make_tuple(&CPU::asl, 2);
     instructions[0x16] = std::make_tuple(&CPU::asl, 3);
     instructions[0x1E] = std::make_tuple(&CPU::asl, 4);
+
+    // Branch
+    // BCC
+    instructions[0x90] = std::make_tuple(&CPU::bcc, 0);
+    // BCS
+    instructions[0xB0] = std::make_tuple(&CPU::bcs, 0);
+    // BEQ
+    instructions[0xF0] = std::make_tuple(&CPU::beq, 0);
 }
 
 void CPU::advanceNClockCycles (int n) {
@@ -478,4 +486,43 @@ void CPU::asl (u8 mode) {
         Z = 0;
         N = 0;
     }
+}
+
+void CPU::bcc (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (C == 0)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
+}
+
+void CPU::bcs (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (C == 1)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
+}
+
+void CPU::beq (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (Z == 1)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
 }

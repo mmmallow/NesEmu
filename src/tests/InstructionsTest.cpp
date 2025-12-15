@@ -531,3 +531,72 @@ public:
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
 };
+
+class branchTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void BCC() {
+        CPU c (10, 0);
+
+        // Test sets the accumulator to 1 then branches to
+        // different part of program where it is set to 5
+        c.A = 1;
+        c.mem[10] = 0x90;
+        // Two's complement negative 5
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BCC: passed" << std::endl;
+    }
+
+    void BCS() {
+        CPU c (10, 0);
+
+        // Test sets the accumulator to 1 then branches to
+        // different part of program where it is set to 5
+        c.A = 1;
+        c.C = 1;
+        c.mem[10] = 0xB0;
+        // Two's complement negative 5
+        c.mem[11] = 0b11111011;
+        
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BCS: passed" << std::endl;
+    }
+
+    void BEQ() {
+        CPU c (10, 0);
+
+        c.Z = 1;
+        c.A = 1;
+        c.mem[10] = 0xF0;
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BEQ: passed" << std::endl;
+    }
+};

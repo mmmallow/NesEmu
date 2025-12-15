@@ -98,9 +98,22 @@ class CPU {
     // A AND M -> A
     void AND(u8 mode);
 
+    // Arithmetic Shift Left
     // Shift Left 1 Bit
     // Shift the accumulator or memory left 1 bit
     void asl(u8 mode);
+
+    // Branch on Carry Clear
+    // Set program counter to address +- offset given if C == 0
+    void bcc(u8 mode);
+
+    // Branch on Carry Set
+    // Set program counter to address +- offset given if C == 1
+    void bcs(u8 mode);
+
+    // Branch on Result Zero
+    // Set program counter to address +- offset given if Z == 1
+    void beq(u8 mode);
 
 
     /************* Instruction Set ***************
