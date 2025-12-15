@@ -3,14 +3,11 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    andTest t;
-    t.IndirectX();
+    aslTest t;
     t.ZeroPage();
-    t.Immediate();
+    t.Accumulator();
     t.Absolute();
-    t.IndirectY();
     t.ZeroPageX();
-    t.AbsoluteY();
     t.AbsoluteX();
 }
 

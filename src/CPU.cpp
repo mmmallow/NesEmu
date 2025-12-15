@@ -83,6 +83,13 @@ void CPU::init() {
     instructions[0x35] = std::make_tuple(&CPU::AND, 5);
     instructions[0x39] = std::make_tuple(&CPU::AND, 6);
     instructions[0x3d] = std::make_tuple(&CPU::AND, 7);
+
+    // ASL
+    instructions[0x06] = std::make_tuple(&CPU::asl, 0);
+    instructions[0x0A] = std::make_tuple(&CPU::asl, 1);
+    instructions[0x0E] = std::make_tuple(&CPU::asl, 2);
+    instructions[0x16] = std::make_tuple(&CPU::asl, 3);
+    instructions[0x1E] = std::make_tuple(&CPU::asl, 4);
 }
 
 void CPU::advanceNClockCycles (int n) {
@@ -389,6 +396,83 @@ void CPU::AND (u8 mode) {
     else if (A >= 128) {
         N = 1;
         Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+
+void CPU::asl (u8 mode) {
+    u8 previous;
+    u8 current;
+    u16 value;
+    u16 high_byte;
+    u16 low_byte;
+    u8 zp_address;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            zp_address = mem[++PC];
+            previous = mem[zp_address];
+            mem[zp_address] = mem[zp_address] << 1;
+            current = mem[zp_address];
+            advanceNClockCycles(5);
+            break;
+        // Accumulator
+        case 1:
+            previous = A;
+            A = A << 1;
+            current = A;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            previous = mem[value];
+            mem[value] = mem[value] << 1;
+            current = mem[value];
+            advanceNClockCycles(6);
+            break;
+        // Zero Page, X
+        case 3:
+            zp_address = mem[++PC];
+            previous = mem[zp_address + X];
+            mem[zp_address + X] = mem[zp_address + X] << 1;
+            current = mem[zp_address + X];
+            advanceNClockCycles(6);
+            break;
+        // Absolute, X
+        case 4:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            previous = mem[value + X];
+            mem[value + X] = mem[value + X] << 1;
+            current = mem[value + X];
+            advanceNClockCycles(7);
+            break;
+    }
+
+    PC++;
+
+    // Set status flags
+    if (previous >= 128)
+        C = 1;
+    else
+        C = 0;
+
+    if (current == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (current >= 128) {
+        Z = 0;
+        N = 1;
     }
     else {
         Z = 0;

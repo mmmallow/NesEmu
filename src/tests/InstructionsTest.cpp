@@ -443,3 +443,91 @@ public:
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
 };
+
+class aslTest {
+public:
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        // asl $30
+        c.mem[1] = 0x06;
+        c.mem[2] = 0x30;
+
+        c.mem[0x30] = 0b00000001;
+
+        driver(c, 5);
+
+        assert(c.mem[0x30] == 2);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Accumulator() {
+        CPU c(1, 0);
+
+        // asl A
+        c.A = 0b00000001;
+        c.mem[1] = 0x0A;
+
+        driver(c, 2);
+
+        assert(c.A == 2);
+        std::cout << "Accumulator: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        // asl $2A30
+        c.mem[1] = 0x0E;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x2A;
+
+        c.mem[0x2A30] = 0b00000001;
+
+        driver(c, 6);
+
+        assert(c.mem[0x2A30] == 2);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void ZeroPageX() {
+        CPU c(1, 0);
+
+        // asl $20,X
+        c.X = 10;
+        c.mem[1] = 0x16;
+        c.mem[2] = 0x20;
+
+        c.mem[0x2A] = 0b00000001;
+
+        driver(c, 6);
+
+        assert(c.mem[0x2A] == 2);
+        std::cout << "ZeroPageX: Passed" << std::endl;
+    }
+
+    void AbsoluteX() {
+        CPU c(1, 0);
+
+        // asl $2C3D,X
+        c.X = 2;
+        c.mem[1] = 0x1E;
+        c.mem[2] = 0x3D;
+        c.mem[3] = 0x2C;
+
+        c.mem[0x2C3F] = 0b00000001;
+
+        driver(c, 7);
+        assert(c.mem[0x2C3F] == 2);
+        std::cout << "AbsoluteX: Passed" << std::endl;
+    }
+};

@@ -98,6 +98,10 @@ class CPU {
     // A AND M -> A
     void AND(u8 mode);
 
+    // Shift Left 1 Bit
+    // Shift the accumulator or memory left 1 bit
+    void asl(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
