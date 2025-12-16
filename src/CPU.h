@@ -127,6 +127,18 @@ class CPU {
     // given and sets the N and V flags respectively
     void bit(u8 mode);
 
+    // Branch on Minus
+    // Set program counter to address +- offset given if N == 1
+    void bmi(u8 mode);
+
+    // Branch on Result Not Zero
+    // Set program counter to address +- offset given if Z == 0
+    void bne(u8 mode);
+
+    // Branch on Result Plus
+    // Set program counter to address +- offset given if N == 0
+    void bpl(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers

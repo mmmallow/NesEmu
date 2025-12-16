@@ -600,6 +600,57 @@ public:
         std::cout << "BEQ: passed" << std::endl;
     }
 
+    void BMI() {
+        CPU c (10, 0);
+
+        c.N = 1;
+        c.A = 1;
+        c.mem[10] = 0x30;
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BMI: passed" << std::endl;
+    }
+
+    void BNE() {
+        CPU c (10, 0);
+
+        c.Z = 0;
+        c.A = 1;
+        c.mem[10] = 0xD0;
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BNE: passed" << std::endl;
+    }
+
+    void BPL() {
+        CPU c (10, 0);
+
+        c.N = 0;
+        c.A = 1;
+        c.mem[10] = 0x10;
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BPL: passed" << std::endl;
+    }
+
     void realProgram() {
         CPU c(1, 0);
 

@@ -3,22 +3,25 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    bitTest t;
-    //t.IndirectX();
+    /*bitTest t;
+    t.IndirectX();
     t.ZeroPage();
-    //t.Immediate();
+    t.Immediate();
     t.Absolute();
-    /*t.IndirectY();
+    t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
     t.AbsoluteX();*/
 
-    /*
+    
     branchTest t;
     t.BCC();
     t.BCS();
     t.BEQ();
-    t.realProgram();*/
+    t.BMI();
+    t.BNE();
+    t.BPL();
+    t.realProgram();
 }
 
 int main (int argc, char* argv[]) {

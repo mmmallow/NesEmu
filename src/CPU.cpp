@@ -98,6 +98,12 @@ void CPU::init() {
     instructions[0xB0] = std::make_tuple(&CPU::bcs, 0);
     // BEQ
     instructions[0xF0] = std::make_tuple(&CPU::beq, 0);
+    // BMI
+    instructions[0x30] = std::make_tuple(&CPU::bmi, 0);
+    // BNE
+    instructions[0xD0] = std::make_tuple(&CPU::bne, 0);
+    // BPL
+    instructions[0x10] = std::make_tuple(&CPU::bpl, 0);
 
     // BIT
     instructions[0x24] = std::make_tuple(&CPU::bit, 0);
@@ -695,4 +701,43 @@ void CPU::bit (u8 mode) {
         N = 1;
         V = 1;
     }
+}
+
+void CPU::bmi (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (N == 1)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
+}
+
+void CPU::bne (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (Z == 0)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
+}
+
+void CPU::bpl (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (N == 0)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
 }
