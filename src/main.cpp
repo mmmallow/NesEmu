@@ -3,18 +3,22 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    /*
-    aslTest t;
+    cmpTest t;
+    t.IndirectX();
     t.ZeroPage();
-    t.Accumulator();
+    t.Immediate();
     t.Absolute();
+    t.IndirectY();
     t.ZeroPageX();
-    t.AbsoluteX();*/
+    t.AbsoluteY();
+    t.AbsoluteX();
 
+    /*
     branchTest t;
     t.BCC();
     t.BCS();
     t.BEQ();
+    t.realProgram();*/
 }
 
 int main (int argc, char* argv[]) {

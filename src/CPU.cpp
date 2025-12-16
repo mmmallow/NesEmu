@@ -98,6 +98,16 @@ void CPU::init() {
     instructions[0xB0] = std::make_tuple(&CPU::bcs, 0);
     // BEQ
     instructions[0xF0] = std::make_tuple(&CPU::beq, 0);
+
+    // CMP
+    instructions[0xc1] = std::make_tuple(&CPU::cmp, 0);
+    instructions[0xc5] = std::make_tuple(&CPU::cmp, 1);
+    instructions[0xc9] = std::make_tuple(&CPU::cmp, 2);
+    instructions[0xcd] = std::make_tuple(&CPU::cmp, 3);
+    instructions[0xd1] = std::make_tuple(&CPU::cmp, 4);
+    instructions[0xd5] = std::make_tuple(&CPU::cmp, 5);
+    instructions[0xd9] = std::make_tuple(&CPU::cmp, 6);
+    instructions[0xdd] = std::make_tuple(&CPU::cmp, 7);
 }
 
 void CPU::advanceNClockCycles (int n) {
@@ -218,6 +228,7 @@ void CPU::adc (u8 mode) {
     u16 low_byte;
     u16 value;
     u8 zp_address;
+    int previous_A = A;
     switch (mode) {
         // Indirect, X
         case 0:
@@ -306,7 +317,7 @@ void CPU::adc (u8 mode) {
         N = 0;
     }
 
-    if ((A - value + C) + value + C >= 256) {
+    if (previous_A + value + C >= 256) {
         V = 1;
         C = 1;
     }
@@ -525,4 +536,108 @@ void CPU::beq (u8 mode) {
         PC += 2;
 
     advanceNClockCycles(2);
+}
+
+void CPU::cmp (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 value;
+    u8 zp_address;
+    u8 result;
+    switch (mode) {
+        // Indirect, X: 
+        case 0:
+            // cmp ($70,X)
+            // compare the contents of the address stored at $70+X and $70+1+X with A
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address + X];
+            high_byte = mem[zp_address + X + 1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value];
+            advanceNClockCycles(6);
+            break;
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            result = mem[value];
+            advanceNClockCycles(3);
+            break;
+        // Immediate
+        case 2:
+            value = mem[++PC];
+            result = value;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value];
+            advanceNClockCycles(4);
+            break;
+        // Indirect, Y
+        case 4:
+            // cmp ($70),Y
+            // Add Y to the address stored at $70 and $70+1, then compare the contents of the resulting
+            // address with A
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address];
+            high_byte = mem[zp_address+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value+Y];
+            advanceNClockCycles(5);
+            break;
+        // Zero Page, X
+        case 5:
+            value = mem[++PC];
+            // Cast value to a u8 so values will wrap around to beginning of Zero Page
+            result = mem[(u8)value + X];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, Y
+        case 6:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value + Y];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, X
+        case 7:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value + X];
+            advanceNClockCycles(4);
+            break;           
+    }
+    PC++;
+    // Set flags
+    if (A < result) {
+        Z = 0;
+        C = 0;
+        if (result >= 128)
+            N = 1;
+        else
+            N = 0;
+    }
+    else if (A == result) {
+        N = 0;
+        Z = 1;
+        C = 1;
+    }
+    else if (A > result) {
+        Z = 0;
+        C = 1;
+        if (result >= 128)
+            N = 1;
+        else
+            N = 0;
+    }
 }

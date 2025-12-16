@@ -115,6 +115,12 @@ class CPU {
     // Set program counter to address +- offset given if Z == 1
     void beq(u8 mode);
 
+    // Compare Accumulator
+    // Compares the either the value given or the value at the
+    // address given with the accumulator, then sets the appropriate
+    // status flags based on the result
+    void cmp(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
