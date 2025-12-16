@@ -99,6 +99,10 @@ void CPU::init() {
     // BEQ
     instructions[0xF0] = std::make_tuple(&CPU::beq, 0);
 
+    // BIT
+    instructions[0x24] = std::make_tuple(&CPU::bit, 0);
+    instructions[0x2C] = std::make_tuple(&CPU::bit, 1);
+
     // CMP
     instructions[0xc1] = std::make_tuple(&CPU::cmp, 0);
     instructions[0xc5] = std::make_tuple(&CPU::cmp, 1);
@@ -639,5 +643,56 @@ void CPU::cmp (u8 mode) {
             N = 1;
         else
             N = 0;
+    }
+}
+
+void CPU::bit (u8 mode) {
+    u16 low_byte;
+    u16 high_byte;
+    u16 address;
+    u8 result;
+    u8 value;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            address = mem[++PC];
+            value = mem[address];
+            result = A & value;
+            advanceNClockCycles(3);
+            break;
+        // Absolute
+        case 1:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            address = high_byte | low_byte;
+            value = mem[address];
+            result = A & value;
+            advanceNClockCycles(4);
+            break;
+    }
+
+    if (result == 0)
+        Z = 1;
+    else
+        Z = 0;
+
+    // Bit shift 6 places so only last 2 bits are left
+    u8 nv_values = value >> 6;
+    if (nv_values == 0) {
+        N = 0;
+        V = 0;
+    }
+    else if (nv_values == 1) {
+        N = 0;
+        V = 1;
+    }
+    else if (nv_values == 2) {
+        N = 1;
+        V = 0;
+    }
+    else {
+        N = 1;
+        V = 1;
     }
 }

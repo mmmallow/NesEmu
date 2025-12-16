@@ -3,15 +3,15 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    cmpTest t;
-    t.IndirectX();
+    bitTest t;
+    //t.IndirectX();
     t.ZeroPage();
-    t.Immediate();
+    //t.Immediate();
     t.Absolute();
-    t.IndirectY();
+    /*t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
-    t.AbsoluteX();
+    t.AbsoluteX();*/
 
     /*
     branchTest t;

@@ -799,3 +799,52 @@ public:
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
 };
+
+class bitTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+        
+        c.A = 0b11110000;
+        c.mem[1] = 0x24;
+        c.mem[2] = 0x30;
+
+        c.mem[0x30] = 0b00001111;
+
+        driver(c, 3);
+
+        assert(c.Z == 1);
+        assert(c.N == 0);
+        assert(c.V == 0);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        c.A = 0b01110011;
+        c.mem[1] = 0x2C;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x4C;
+
+        c.mem[0x4C30] = 0b11101100;
+
+        driver(c, 4);
+
+        assert(c.Z == 0);
+        assert(c.N == 1);
+        assert(c.V == 1);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+};

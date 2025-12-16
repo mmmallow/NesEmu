@@ -121,6 +121,12 @@ class CPU {
     // status flags based on the result
     void cmp(u8 mode);
 
+    // Bit
+    // ANDs the value at the memory address given with the accumulator
+    // and sets Z accordingly. It also takes the 7 and 6 bits of the value
+    // given and sets the N and V flags respectively
+    void bit(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
