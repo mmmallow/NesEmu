@@ -14,14 +14,17 @@ void Test() {
     t.AbsoluteX();*/
 
     
-    branchTest t;
+    /*branchTest t;
     t.BCC();
     t.BCS();
     t.BEQ();
     t.BMI();
     t.BNE();
     t.BPL();
-    t.realProgram();
+    t.realProgram();*/
+
+    brkTest t;
+    t.Implied();
 }
 
 int main (int argc, char* argv[]) {

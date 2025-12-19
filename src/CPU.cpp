@@ -5,7 +5,7 @@ CPU::CPU (u8 prg_start_low, u8 prg_start_high)
   X(0),
   Y(0),
   PC(0xFFFC),
-  S(0xFD),
+  S(0xFF),
   N (0),
   V (0),
   B (0),
@@ -109,6 +109,9 @@ void CPU::init() {
     instructions[0x24] = std::make_tuple(&CPU::bit, 0);
     instructions[0x2C] = std::make_tuple(&CPU::bit, 1);
 
+    // BRK
+    instructions[0x00] = std::make_tuple(&CPU::brk, 0);
+
     // CMP
     instructions[0xc1] = std::make_tuple(&CPU::cmp, 0);
     instructions[0xc5] = std::make_tuple(&CPU::cmp, 1);
@@ -133,6 +136,20 @@ void CPU::advanceNClockCycles (int n) {
         cycle++;
         current_cycle_time = std::chrono::high_resolution_clock::now();
     }
+}
+
+void CPU::pushStack (u8 item) {
+    u16 stack_addr = 0x1000 | S;
+    mem[stack_addr] = item;
+
+    S--;
+}
+
+u8 CPU::pullStack (u8 item) {
+    S++;
+    u16 stack_addr = 0x1000 | S;
+    
+    return mem[stack_addr];
 }
 
 /******************* Instructions *******************/
@@ -740,4 +757,40 @@ void CPU::bpl (u8 mode) {
         PC += 2;
 
     advanceNClockCycles(2);
+}
+
+void CPU::brk (u8 mode) {
+    // Only one mode, so no switch
+
+    PC += 2;
+    u8 high_byte = PC >> 8;
+    u16 temp_low_byte = PC << 8;
+    u8 low_byte = temp_low_byte >> 8;
+
+    // Form Status flags into one word
+    u8 status = 0;
+    status = (status << 1) | N;
+    status = (status << 1) | V;
+    // Constant 1
+    status = (status << 1) | 1;
+    // Set B Flag
+    status = (status << 1) | 1;
+    // Set D Flag to 0 (not used in NES)
+    status = (status << 1) | 0;
+    // Set Interrupt Disable flag
+    status = (status << 1) | 1;
+    status = (status << 1) | Z;
+    status = (status << 1) | C;
+
+    pushStack(high_byte);
+    pushStack(low_byte);
+    pushStack(status);
+
+    // Get new PC position
+    u16 pc_high_byte = mem[0xFFFF];
+    low_byte = mem[0xFFFE];
+    pc_high_byte = pc_high_byte << 8;
+    PC = pc_high_byte | low_byte;
+    
+    advanceNClockCycles(7);
 }

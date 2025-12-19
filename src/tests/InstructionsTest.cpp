@@ -899,3 +899,44 @@ public:
     }
 
 };
+
+class brkTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void Implied() {
+        CPU c(1, 0);
+
+        // lda #$FF
+        // adc #$2
+        // brk
+        // ...
+        // lda #$A
+
+        c.mem[0xFFFE] = 0x23;
+        c.mem[0xFFFF] = 0xA3;
+        c.A = 255;
+        c.mem[1] = 0x69;
+        c.mem[2] = 2;
+        c.mem[3] = 0;
+
+        c.mem[0xA323] = 0xA9;
+        c.mem[0xA324] = 10;
+
+        driver(c, 11);
+
+        assert(c.A == 10);
+        assert(c.mem[(0x1000 | c.S) + 1] == 0b01110101);
+        std::cout << "Implied: Passed" << std::endl;
+
+    }
+    
+};

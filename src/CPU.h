@@ -75,7 +75,10 @@ class CPU {
     // Current Cycle Time
     std::chrono::time_point<std::chrono::system_clock> current_cycle_time = std::chrono::high_resolution_clock::now();
 
+    /************** Helper Methods **************/
     void advanceNClockCycles (int n);
+    void pushStack (u8 item);
+    u8 pullStack (u8 item);
 
     /*********** Instruction Methods ***********/
     // Load Accumulator
@@ -138,6 +141,12 @@ class CPU {
     // Branch on Result Plus
     // Set program counter to address +- offset given if N == 0
     void bpl(u8 mode);
+
+    // Break
+    // Triggers a software interrupt. Stores the PC and status flags on the stack
+    // and grabs the location stored at $FFFE-$FFFF and sets the PC to that.
+    // Also sets the interrupt disable flag.
+    void brk(u8 mode);
 
 
     /************* Instruction Set ***************
