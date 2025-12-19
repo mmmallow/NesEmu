@@ -148,6 +148,14 @@ class CPU {
     // Also sets the interrupt disable flag.
     void brk(u8 mode);
 
+    // Branch on Overflow Clear
+    // Set program counter to address +- offset given if V == 0
+    void bvc(u8 mode);
+
+    // Branch on Overflow Set
+    // Set program counter to address +- offset given if V == 1
+    void bvs(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers

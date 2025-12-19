@@ -104,6 +104,10 @@ void CPU::init() {
     instructions[0xD0] = std::make_tuple(&CPU::bne, 0);
     // BPL
     instructions[0x10] = std::make_tuple(&CPU::bpl, 0);
+    // BVC
+    instructions[0x50] = std::make_tuple(&CPU::bvc, 0);
+    // BVS
+    instructions[0x70] = std::make_tuple(&CPU::bvs, 0);
 
     // BIT
     instructions[0x24] = std::make_tuple(&CPU::bit, 0);
@@ -793,4 +797,30 @@ void CPU::brk (u8 mode) {
     PC = pc_high_byte | low_byte;
     
     advanceNClockCycles(7);
+}
+
+void CPU::bvc (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (V == 0)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
+}
+
+void CPU::bvs (u8 mode) {
+    // Only one mode, so don't need switch statement
+    
+    // Cast the offset to a char because it is a signed integer 
+    char offset = mem[PC+1];
+    if (V == 1)
+        PC += offset;
+    else
+        PC += 2;
+
+    advanceNClockCycles(2);
 }

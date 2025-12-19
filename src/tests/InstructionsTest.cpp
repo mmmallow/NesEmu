@@ -651,6 +651,40 @@ public:
         std::cout << "BPL: passed" << std::endl;
     }
 
+    void BVC() {
+        CPU c (10, 0);
+
+        c.V = 0;
+        c.A = 1;
+        c.mem[10] = 0x50;
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BVC: passed" << std::endl;
+    }
+
+    void BVS() {
+        CPU c (10, 0);
+
+        c.V = 1;
+        c.A = 1;
+        c.mem[10] = 0x70;
+        c.mem[11] = 0b11111011;
+
+        c.mem[5] = 0xA9;
+        c.mem[6] = 5;
+
+        driver(c, 4);
+
+        assert(c.A == 5);
+        std::cout << "BVS: passed" << std::endl;
+    }
+
     void realProgram() {
         CPU c(1, 0);
 
