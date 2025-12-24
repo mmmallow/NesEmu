@@ -184,6 +184,12 @@ class CPU {
     // Decrement Y by 1
     void dey(u8 mode);
 
+    // Exclusive OR Memory w/ Accumulator
+    // Bitwise XORs either the value given or the value at the
+    // mem address given with the accumulator, then stores
+    // the result in the accumulator. 
+    void eor(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers

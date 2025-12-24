@@ -3,15 +3,15 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    cpyTest t;
-    //t.IndirectX();
+    eorTest t;
+    t.IndirectX();
     t.ZeroPage();
     t.Immediate();
     t.Absolute();
-   /* t.IndirectY();
+    t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
-    t.AbsoluteX();*/
+    t.AbsoluteX();
 
    /* 
     branchTest t;
@@ -27,15 +27,25 @@ void Test() {
 
     /*brkTest t;
     t.Implied();*/
+
+    /*deXYTest t;
+    t.Dex();
+    t.Dey();*/
 }
 
 int main (int argc, char* argv[]) {
     Test();
 
-    /*
-    CPU c (1, 0);
     
-    while (c.cycle < 5) {
+    CPU c (1, 0);
+/*
+    //lda $30
+    c.mem[1] = 0xA5;
+    c.mem[2] = 0x30;
+
+    c.mem[0x30] = 10;
+
+    while (c.cycle < 3) {
         u8 instruction = c.mem[c.PC];
         auto instruct = c.instructions[instruction];
         auto command = std::get<0>(instruct);
@@ -43,7 +53,7 @@ int main (int argc, char* argv[]) {
     }
 
     std::cout << (int)c.A << std::endl;
-    */
+  */  
 
     return 0;
 }
