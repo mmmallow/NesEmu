@@ -156,13 +156,42 @@ class CPU {
     // Set program counter to address +- offset given if V == 1
     void bvs(u8 mode);
 
+    // Clear Carry Flag
+    // Sets the Carry Flag to 0
+    void clc(u8 mode);
+
+    // Clear Interrupt Flag
+    // Sets the Interrup Disable Flag to 0
+    void cli(u8 mode);
+
+    // Clear Overflow Flag
+    // Sets the Overflow Flag to 0
+    void clv(u8 mode);
+
+    // Compare Memory and X
+    void cpx(u8 mode);
+
+    // Compare Memory and Y
+    void cpy(u8 mode);
+
+    // Decrement Memory by 1
+    // Decreases the value at the memory address by 1
+    void dec(u8 mode);
+
+    // Decrement X by 1
+    void dex(u8 mode);
+    
+    // Decrement Y by 1
+    void dey(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
     * to the instruction methods and u8's for the addressing modes
     * of that specific instruction. Each index corresponds to the 
-    * instruction at the location in the instruction table
-    * at https://www.masswerk.at/6502/6502_instruction_set.html
+    * instruction at the location in the instruction table (that 
+    * instruction's op code)
+    * https://www.masswerk.at/6502/6502_instruction_set.html
     * **********************************************/
 
     std::tuple<Fp, u8> instructions[256];

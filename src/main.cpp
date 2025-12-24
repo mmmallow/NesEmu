@@ -3,17 +3,17 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    /*bitTest t;
-    t.IndirectX();
+    cpyTest t;
+    //t.IndirectX();
     t.ZeroPage();
     t.Immediate();
     t.Absolute();
-    t.IndirectY();
+   /* t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
     t.AbsoluteX();*/
 
-    
+   /* 
     branchTest t;
     t.BCC();
     t.BCS();
@@ -23,7 +23,7 @@ void Test() {
     t.BPL();
     t.BVC();
     t.BVS();
-    t.realProgram();
+    t.realProgram();*/
 
     /*brkTest t;
     t.Implied();*/

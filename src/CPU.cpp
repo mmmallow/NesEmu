@@ -125,6 +125,16 @@ void CPU::init() {
     instructions[0xd5] = std::make_tuple(&CPU::cmp, 5);
     instructions[0xd9] = std::make_tuple(&CPU::cmp, 6);
     instructions[0xdd] = std::make_tuple(&CPU::cmp, 7);
+
+    // CPX
+    instructions[0xE0] = std::make_tuple(&CPU::cpx, 0);
+    instructions[0xE4] = std::make_tuple(&CPU::cpx, 1);
+    instructions[0xEC] = std::make_tuple(&CPU::cpx, 2);
+
+    // CPY
+    instructions[0xC0] = std::make_tuple(&CPU::cpy, 0);
+    instructions[0xC4] = std::make_tuple(&CPU::cpy, 1);
+    instructions[0xCC] = std::make_tuple(&CPU::cpy, 2);
 }
 
 void CPU::advanceNClockCycles (int n) {
@@ -823,4 +833,136 @@ void CPU::bvs (u8 mode) {
         PC += 2;
 
     advanceNClockCycles(2);
+}
+
+void CPU::clc (u8 mode) {
+    // Only one mode
+    C = 0;
+    advanceNClockCycles(2);
+}
+
+void CPU::cli (u8 mode) {
+    // Only one mode
+    I = 0;
+    advanceNClockCycles(2);
+}
+
+void CPU::clv (u8 mode) {
+    V = 0;
+    advanceNClockCycles(2);
+}
+
+void CPU::cpx (u8 mode) {
+    u16 low_byte;
+    u16 high_byte;
+    u16 value;
+    u8 result;
+    switch (mode) {
+        // Immediate
+        case 0:
+            result = mem[++PC];
+            advanceNClockCycles(2);
+            break;
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            result = mem[value];
+            advanceNClockCycles(3);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value];
+            advanceNClockCycles(4);
+            break;
+    }
+    PC++;
+    // Set flags
+    if (X < result) {
+        Z = 0;
+        C = 0;
+        if (result >= 128)
+            N = 1;
+        else
+            N = 0;
+    }
+    else if (X == result) {
+        N = 0;
+        Z = 1;
+        C = 1;
+    }
+    else if (X > result) {
+        Z = 0;
+        C = 1;
+        if (result >= 128)
+            N = 1;
+        else
+            N = 0;
+    }
+}
+
+void CPU::cpy (u8 mode) {
+    u16 low_byte;
+    u16 high_byte;
+    u16 value;
+    u8 result;
+    switch (mode) {
+        // Immediate
+        case 0:
+            result = mem[++PC];
+            advanceNClockCycles(2);
+            break;
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            result = mem[value];
+            advanceNClockCycles(3);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = mem[value];
+            advanceNClockCycles(4);
+            break;
+    }
+    PC++;
+    // Set flags
+    if (Y < result) {
+        Z = 0;
+        C = 0;
+        if (result >= 128)
+            N = 1;
+        else
+            N = 0;
+    }
+    else if (Y == result) {
+        N = 0;
+        Z = 1;
+        C = 1;
+    }
+    else if (Y > result) {
+        Z = 0;
+        C = 1;
+        if (result >= 128)
+            N = 1;
+        else
+            N = 0;
+    }
+}
+
+void CPU::dec (u8 mode) {
+    u16 low_byte;
+    u16 high_byte;
+    u16 value;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            
+    }
 }

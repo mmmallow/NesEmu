@@ -974,3 +974,129 @@ public:
     }
     
 };
+
+class cpxTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        // cpx $30
+        c.X = 10;
+        c.mem[1] = 0xE4;
+        c.mem[2] = 0x30;
+
+        c.mem[0x30] = 5;
+
+        driver(c, 3);
+
+        // Greater than, C = 1, Z = 0, N = 0
+        assert(c.C == 1 && c.Z == 0 && c.N == 0);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Immediate() {
+        CPU c(1, 0);
+
+        // cpx #$10;
+        c.X = 10;
+        c.mem[1] = 0xE0;
+        c.mem[2] = 10;
+
+        driver(c, 2);
+
+        // Equal, C == 1, Z = 1, N = 0
+        assert(c.C == 1 && c.Z == 1 && c.N == 0);
+        std::cout << "Immediate: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        // cpx $2A30
+        c.X = 10;
+        c.mem[1] = 0xEC;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x2A;
+
+        c.mem[0x2A30] = 5;
+
+        driver(c, 4);
+
+        // Greater than, C = 1, Z = 0, N = 0
+        assert(c.C == 1 && c.Z == 0 && c.N == 0);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+};
+
+class cpyTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        // cpy $30
+        c.Y = 10;
+        c.mem[1] = 0xC4;
+        c.mem[2] = 0x30;
+
+        c.mem[0x30] = 5;
+
+        driver(c, 3);
+
+        // Greater than, C = 1, Z = 0, N = 0
+        assert(c.C == 1 && c.Z == 0 && c.N == 0);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Immediate() {
+        CPU c(1, 0);
+
+        // cpy #$10;
+        c.Y = 10;
+        c.mem[1] = 0xC0;
+        c.mem[2] = 10;
+
+        driver(c, 2);
+
+        // Equal, C == 1, Z = 1, N = 0
+        assert(c.C == 1 && c.Z == 1 && c.N == 0);
+        std::cout << "Immediate: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        // cpy $2A30
+        c.Y = 10;
+        c.mem[1] = 0xCC;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x2A;
+
+        c.mem[0x2A30] = 5;
+
+        driver(c, 4);
+
+        // Greater than, C = 1, Z = 0, N = 0
+        assert(c.C == 1 && c.Z == 0 && c.N == 0);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+};
