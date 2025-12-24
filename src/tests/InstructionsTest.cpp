@@ -1366,3 +1366,118 @@ public:
     }
 };
 
+class incTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        // inc $30
+        c.mem[1] = 0xE6;
+        c.mem[2] = 0x30;
+        
+        c.mem[0x30] = 10;
+
+        driver(c, 5);
+        
+        assert(c.mem[0x30] == 11);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        // inc $3020
+        c.mem[1] = 0xEE;
+        c.mem[2] = 0x20;
+        c.mem[3] = 0x30;
+
+        c.mem[0x3020] = 10;
+
+        driver(c, 6);
+
+        assert(c.mem[0x3020] == 11);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void ZeroPageX() {
+        CPU c(1, 0);
+
+        // inc $30,X
+        c.X = 2;
+        c.mem[1] = 0xF6;
+        c.mem[2] = 0x30;
+
+        c.mem[0x32] = 10;
+
+        driver(c, 6);
+
+        assert(c.mem[0x32] == 11);
+        std::cout << "ZeroPageX: Passed" << std::endl;
+    }
+
+    void AbsoluteX() {
+        CPU c(1, 0);
+
+        // inc $3020,X
+        c.X = 5;
+        c.mem[1] = 0xFE;
+        c.mem[2] = 0x20;
+        c.mem[3] = 0x30;
+
+        c.mem[0x3025] = 10;
+
+        driver(c, 7);
+
+        assert(c.mem[0x3025] == 11);
+        std::cout << "AbsoluteX: Passed" << std::endl;
+    }
+};
+
+class inXYTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void Inx() {
+        CPU c(1, 0);
+
+        // INX
+        c.X = 10;
+        c.mem[1] = 0xE8;
+
+        driver(c, 2);
+
+        assert(c.X == 11);
+        std::cout << "INX: Passed" << std::endl;
+    }
+
+    void Iny() {
+        CPU c(1, 0);
+
+        // INY
+        c.Y = 10;
+        c.mem[1] = 0xC8;
+
+        driver(c, 2);
+
+        assert(c.Y == 11);
+        std::cout << "INY: Passed" << std::endl;
+    }
+};

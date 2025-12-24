@@ -157,6 +157,18 @@ void CPU::init() {
     instructions[0x55] = std::make_tuple(&CPU::eor, 5);
     instructions[0x59] = std::make_tuple(&CPU::eor, 6);
     instructions[0x5D] = std::make_tuple(&CPU::eor, 7);
+
+    // INC
+    instructions[0xE6] = std::make_tuple(&CPU::inc, 0);
+    instructions[0xEE] = std::make_tuple(&CPU::inc, 1);
+    instructions[0xF6] = std::make_tuple(&CPU::inc, 2);
+    instructions[0xFE] = std::make_tuple(&CPU::inc, 3);
+
+    // INX
+    instructions[0xE8] = std::make_tuple(&CPU::inx, 0);
+
+    // INY
+    instructions[0xC8] = std::make_tuple(&CPU::iny, 0);
 }
 
 
@@ -1160,6 +1172,101 @@ void CPU::eor (u8 mode) {
     }
     // Largest bit is set
     else if (A >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+
+void CPU::inc (u8 mode) {
+    u16 low_byte;
+    u16 high_byte;
+    u16 value;
+    u8 zp_address;
+    u8 result;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            zp_address = mem[++PC];
+            result = ++mem[zp_address];
+            advanceNClockCycles(5);
+            break;
+        // Absolute
+        case 1:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = ++mem[value];
+            advanceNClockCycles(6);
+            break;
+        // Zero Page, X
+        case 2:
+            zp_address = mem[++PC];
+            result = ++mem[zp_address + X];
+            advanceNClockCycles(6);
+            break;
+        // Absolute, X
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            result = ++mem[value + X];
+            advanceNClockCycles(7);
+            break;
+    }
+
+    PC++;
+
+    if (result == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (result >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+
+void CPU::inx (u8 mode) {
+    X++;
+    advanceNClockCycles(2);
+
+    PC++;
+
+    if (X == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (X >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+
+void CPU::iny (u8 mode) {
+    Y++;
+    advanceNClockCycles(2);
+
+    PC++;
+
+    if (Y == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (Y >= 128) {
         N = 1;
         Z = 0;
     }

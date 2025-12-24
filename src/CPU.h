@@ -190,6 +190,16 @@ class CPU {
     // the result in the accumulator. 
     void eor(u8 mode);
 
+    // Increment Memory by 1
+    // Increments the value at the memory address by 1
+    void inc(u8 mode);
+
+    // Increment X by 1;
+    void inx(u8 mode);
+
+    // Increment Y by 1;
+    void iny(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
