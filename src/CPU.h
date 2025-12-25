@@ -200,6 +200,14 @@ class CPU {
     // Increment Y by 1;
     void iny(u8 mode);
 
+    // Jump
+    // Moves the program to the specified address
+    void jmp(u8 mode);
+
+    // Jump Subroutine
+    // Stores the PC and Status Flags on the stack then jumps
+    // to address specified
+    void jsr(u8 mode);
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers

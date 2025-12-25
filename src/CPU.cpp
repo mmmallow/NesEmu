@@ -1275,3 +1275,50 @@ void CPU::iny (u8 mode) {
         N = 0;
     }
 }
+
+void CPU::jmp (u8 mode) {
+    u16 low_byte;
+    u16 high_byte;
+    u16 value;
+    switch (mode) {
+        // Absolute
+        case 0:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            PC = value;
+            advanceNClockCycles(3);
+            break;
+        // Indirect
+        case 1:
+            // Set the PC to the address stored at the address given by the programmer
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            // Address stored at the address given
+            low_byte = mem[value];
+            high_byte = mem[value+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            PC = value;
+            advanceNClockCycles(5);
+            break;
+    }
+}
+
+void CPU::jsr (u8 mode) {
+    u16 low_byte = mem[++PC];
+    // Use PC+1, not ++PC, so that current PC will be return address of subroutine
+    u16 high_byte = mem[PC+1];
+    high_byte = high_byte << 8;
+    value = high_byte | low_byte;
+    u8 pc_low_byte = PC;
+    u8 pc_high_byte = PC >> 8;
+    
+    pushStack(pc_high_byte);
+    pushStack(pc_low_byte);
+    PC = value;
+    advanceNClockCycles(6);
+}

@@ -49,9 +49,10 @@ int main(int argc, char* argv[]) {
     instructions[LDA](1, 16);
     */
 
-    unsigned char t = 0b11110000;
+    uint16_t t = 0b1000000000000001;
 
-    std::cout << (int8_t)t << std::endl;
+    uint8_t d = t;
+    std::cout << (int)d << std::endl;
 
     return 0;
 }
