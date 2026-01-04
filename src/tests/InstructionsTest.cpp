@@ -1481,3 +1481,45 @@ public:
         std::cout << "INY: Passed" << std::endl;
     }
 };
+
+class jmpTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0x4C;
+        c.mem[2] = 0x33;
+        c.mem[3] = 0xD4;
+
+        driver(c, 3);
+
+        assert(c.PC == 0xD433);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void Indirect() { 
+        CPU c(1, 0);
+
+        c.mem[1] = 0x6C;
+        c.mem[2] = 0x45;
+        c.mem[3] = 0x2E;
+
+        c.mem[0x2E45] = 0xD6;
+        c.mem[0x2E46] = 0x36;
+
+        driver(c, 5);
+
+        assert(c.PC == 0x36D6);
+        std::cout << "Indirect: Passed" << std::endl;
+    }
+};

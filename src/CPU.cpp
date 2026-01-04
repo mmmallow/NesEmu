@@ -169,6 +169,13 @@ void CPU::init() {
 
     // INY
     instructions[0xC8] = std::make_tuple(&CPU::iny, 0);
+
+    // JMP
+    instructions[0x4C] = std::make_tuple(&CPU::jmp, 0);
+    instructions[0x6C] = std::make_tuple(&CPU::jmp, 1);
+
+    // JSR
+    instructions[0x20] = std::make_tuple(&CPU::jsr, 0);
 }
 
 
@@ -1313,7 +1320,7 @@ void CPU::jsr (u8 mode) {
     // Use PC+1, not ++PC, so that current PC will be return address of subroutine
     u16 high_byte = mem[PC+1];
     high_byte = high_byte << 8;
-    value = high_byte | low_byte;
+    u16 value = high_byte | low_byte;
     u8 pc_low_byte = PC;
     u8 pc_high_byte = PC >> 8;
     
@@ -1322,3 +1329,58 @@ void CPU::jsr (u8 mode) {
     PC = value;
     advanceNClockCycles(6);
 }
+
+void CPU::ldx (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 value;
+    u8 zp_address;
+    switch (mode) {
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            X = mem[value];
+            advanceNClockCycles(3);
+            break;
+        // Immediate
+        case 2:
+            value = mem[++PC];
+            X = value;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            X = mem[value];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, Y
+        case 6:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            X = mem[value + Y];
+            advanceNClockCycles(4);
+            break;         
+    }
+    PC++;
+    // Set Status flags
+    if (X == 0) {
+        Z = 1;
+        N = 0;
+    }
+    // Largest bit is set
+    else if (X >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+

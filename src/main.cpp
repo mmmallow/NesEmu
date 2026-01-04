@@ -28,15 +28,16 @@ void Test() {
     /*brkTest t;
     t.Implied();*/
 
-    incTest t;
-    t.ZeroPage();
+    jmpTest t;
+    //t.ZeroPage();
     t.Absolute();
-    t.ZeroPageX();
-    t.AbsoluteX();
+    t.Indirect();
+    //t.ZeroPageX();
+    //t.AbsoluteX();
 
-    inXYTest t2;
+/*    inXYTest t2;
     t2.Inx();
-    t2.Iny();
+    t2.Iny();*/
 }
 
 int main (int argc, char* argv[]) {

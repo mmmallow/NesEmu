@@ -209,6 +209,14 @@ class CPU {
     // to address specified
     void jsr(u8 mode);
 
+    // Load X with Memory
+    // Loads the given memory address into the X register
+    void ldx(u8 mode);
+
+    // Load Y with Memory
+    // Loads the given memory address into the Y register
+    void ldy(u8 mode);
+
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
     * to the instruction methods and u8's for the addressing modes
