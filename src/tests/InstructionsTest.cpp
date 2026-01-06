@@ -1523,3 +1523,171 @@ public:
         std::cout << "Indirect: Passed" << std::endl;
     }
 };
+
+class ldxTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void Immediate() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0xA2;
+        c.mem[2] = 0x20;
+
+        driver(c, 2);
+
+        assert(c.X == 0x20);
+        std::cout << "Immediate: Passed" << std::endl;
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0xA6;
+        c.mem[2] = 0x3A;
+        c.mem[0x3A] = 23;
+
+        driver(c, 3);
+
+        assert(c.X == 23);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0xAE;
+        c.mem[2] = 0x32;
+        c.mem[3] = 0x53;
+
+        c.mem[0x5332] = 10;
+
+        driver(c, 4);
+
+        assert(c.X == 10);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void ZeroPageY() {
+        CPU c(1, 0);
+
+        c.Y = 5;
+        c.mem[1] = 0xB6;
+        c.mem[2] = 0x20;
+        
+        c.mem[0x25] = 10;
+
+        driver(c, 4);
+
+        assert(c.X == 10);
+        std::cout << "ZeroPageY: Passed" << std::endl;
+    }
+
+    void AbsoluteY() {
+        CPU c(1, 0);
+
+        c.Y = 5;
+        c.mem[1] = 0xBE;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x5A;
+
+        c.mem[0x5A35] = 10;
+
+        driver(c, 4);
+
+        assert(c.X == 10);
+        std::cout << "AbsoluteY: Passed" << std::endl;
+    }
+};
+
+class ldyTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void Immediate() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0xA0;
+        c.mem[2] = 0x20;
+
+        driver(c, 2);
+
+        assert(c.Y == 0x20);
+        std::cout << "Immediate: Passed" << std::endl;
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0xA4;
+        c.mem[2] = 0x3A;
+        c.mem[0x3A] = 23;
+
+        driver(c, 3);
+
+        assert(c.Y == 23);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        c.mem[1] = 0xAC;
+        c.mem[2] = 0x32;
+        c.mem[3] = 0x53;
+
+        c.mem[0x5332] = 10;
+
+        driver(c, 4);
+
+        assert(c.Y == 10);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void ZeroPageX() {
+        CPU c(1, 0);
+
+        c.X = 5;
+        c.mem[1] = 0xB4;
+        c.mem[2] = 0x20;
+        
+        c.mem[0x25] = 10;
+
+        driver(c, 4);
+
+        assert(c.Y == 10);
+        std::cout << "ZeroPageX: Passed" << std::endl;
+    }
+
+    void AbsoluteX() {
+        CPU c(1, 0);
+
+        c.X = 5;
+        c.mem[1] = 0xBC;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x5A;
+
+        c.mem[0x5A35] = 10;
+
+        driver(c, 4);
+        
+        assert(c.Y == 10);
+        std::cout << "AbsoluteX: Passed" << std::endl;
+    }
+};

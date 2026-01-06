@@ -176,6 +176,22 @@ void CPU::init() {
 
     // JSR
     instructions[0x20] = std::make_tuple(&CPU::jsr, 0);
+
+    // LDX
+    instructions[0xA2] = std::make_tuple(&CPU::ldx, 0);
+    instructions[0xA6] = std::make_tuple(&CPU::ldx, 1);
+    instructions[0xAE] = std::make_tuple(&CPU::ldx, 2);
+    instructions[0xB6] = std::make_tuple(&CPU::ldx, 3);
+    instructions[0xBE] = std::make_tuple(&CPU::ldx, 4);
+
+    // LDY
+    instructions[0xA0] = std::make_tuple(&CPU::ldy, 0);
+    instructions[0xA4] = std::make_tuple(&CPU::ldy, 1);
+    instructions[0xAC] = std::make_tuple(&CPU::ldy, 2);
+    instructions[0xB4] = std::make_tuple(&CPU::ldy, 3);
+    instructions[0xBC] = std::make_tuple(&CPU::ldy, 4);
+
+
 }
 
 
@@ -1336,20 +1352,20 @@ void CPU::ldx (u8 mode) {
     u16 value;
     u8 zp_address;
     switch (mode) {
+        // Immediate
+        case 0:
+            value = mem[++PC];
+            X = value;
+            advanceNClockCycles(2);
+            break;
         // Zero Page
         case 1:
             value = mem[++PC];
             X = mem[value];
             advanceNClockCycles(3);
             break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            X = value;
-            advanceNClockCycles(2);
-            break;
         // Absolute
-        case 3:
+        case 2:
             low_byte = mem[++PC];
             high_byte = mem[++PC];
             high_byte = high_byte << 8;
@@ -1357,8 +1373,14 @@ void CPU::ldx (u8 mode) {
             X = mem[value];
             advanceNClockCycles(4);
             break;
+        // Zero Page, Y
+        case 3:
+            value = mem[++PC];
+            X = mem[value + Y];
+            advanceNClockCycles(4);
+            break;
         // Absolute, Y
-        case 6:
+        case 4:
             low_byte = mem[++PC];
             high_byte = mem[++PC];
             high_byte = high_byte << 8;
@@ -1384,3 +1406,62 @@ void CPU::ldx (u8 mode) {
     }
 }
 
+void CPU::ldy (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 value;
+    u8 zp_address;
+    switch (mode) {
+        // Immediate
+        case 0:
+            value = mem[++PC];
+            Y = value;
+            advanceNClockCycles(2);
+            break;
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            Y = mem[value];
+            advanceNClockCycles(3);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            Y = mem[value];
+            advanceNClockCycles(4);
+            break;
+        // Zero Page, X
+        case 3:
+            value = mem[++PC];
+            Y = mem[value + X];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, X
+        case 4:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            Y = mem[value + X];
+            advanceNClockCycles(4);
+            break;         
+    }
+    PC++;
+    // Set Status flags
+    if (Y == 0) {
+        Z = 1;
+        N = 0;
+    }
+    // Largest bit is set
+    else if (Y >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
