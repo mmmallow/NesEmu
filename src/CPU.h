@@ -247,6 +247,19 @@ class CPU {
     // Pulls last value from stack and places it into the status register
     void plp(u8 mode);
 
+    // Rotate 1 Bit Left
+    // Rotates the value given or the value at the mem address given
+    // left with the Carry flag. The carry flag becomes the lsb and 
+    // the msb becomes the carry flag.
+    void rol(u8 mode);
+
+    // Rotate 1 Bit Right
+    // Rotates the value given or the value at the mem address given
+    // right with the Carry flag. The carry flag becomes the msb and 
+    // the lsb becomes the carry flag.
+    void ror(u8 mode);
+
+
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
     * to the instruction methods and u8's for the addressing modes

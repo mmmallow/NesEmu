@@ -1995,3 +1995,191 @@ public:
         std::cout << "plp: Passed" << std::endl;
     }
 };
+
+class rolTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        // rol $30
+        c.C = 1;
+        c.mem[1] = 0x26;
+        c.mem[2] = 0x30;
+
+        c.mem[0x30] = 0b00000001;
+
+        driver(c, 5);
+
+        assert(c.mem[0x30] == 3 && c.C == 0);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Accumulator() {
+        CPU c(1, 0);
+
+        // rol A
+        c.C = 1;
+        c.A = 0b00000101;
+        c.mem[1] = 0x2A;
+
+        driver(c, 2);
+
+        assert(c.A == 11 && c.C == 0);
+        std::cout << "Accumulator: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        // rol $2A30
+        c.C = 1;
+        c.mem[1] = 0x2E;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x2A;
+
+        c.mem[0x2A30] = 0b00000001;
+
+        driver(c, 6);
+
+        assert(c.mem[0x2A30] == 3 && c.C == 0);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void ZeroPageX() {
+        CPU c(1, 0);
+
+        // rol $20,X
+        c.X = 10;
+        c.C = 1;
+        c.mem[1] = 0x36;
+        c.mem[2] = 0x20;
+
+        c.mem[0x2A] = 0b00000001;
+
+        driver(c, 6);
+
+        assert(c.mem[0x2A] == 3 && c.C == 0);
+        std::cout << "ZeroPageX: Passed" << std::endl;
+    }
+
+    void AbsoluteX() {
+        CPU c(1, 0);
+
+        // rol $2C3D,X
+        c.X = 2;
+        c.C = 1;
+        c.mem[1] = 0x3E;
+        c.mem[2] = 0x3D;
+        c.mem[3] = 0x2C;
+
+        c.mem[0x2C3F] = 0b00000001;
+
+        driver(c, 7);
+        assert(c.mem[0x2C3F] == 3 && c.C == 0);
+        std::cout << "AbsoluteX: Passed" << std::endl;
+    }
+};
+
+class rorTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void ZeroPage() {
+        CPU c(1, 0);
+
+        // ror $30
+        c.C = 1;
+        c.mem[1] = 0x66;
+        c.mem[2] = 0x30;
+
+        c.mem[0x30] = 0b00000001;
+
+        driver(c, 5);
+
+        assert(c.mem[0x30] == 128 && c.C == 1);
+        std::cout << "ZeroPage: Passed" << std::endl;
+    }
+
+    void Accumulator() {
+        CPU c(1, 0);
+
+        // ror A
+        c.C = 1;
+        c.A = 0b00000001;
+        c.mem[1] = 0x6A;
+
+        driver(c, 2);
+
+        assert(c.A == 128 && c.C == 1);
+        std::cout << "Accumulator: Passed" << std::endl;
+    }
+
+    void Absolute() {
+        CPU c(1, 0);
+
+        // ror $2A30
+        c.C = 1;
+        c.mem[1] = 0x6E;
+        c.mem[2] = 0x30;
+        c.mem[3] = 0x2A;
+
+        c.mem[0x2A30] = 0b00000001;
+
+        driver(c, 6);
+
+        assert(c.mem[0x2A30] == 128 && c.C == 1);
+        std::cout << "Absolute: Passed" << std::endl;
+    }
+
+    void ZeroPageX() {
+        CPU c(1, 0);
+
+        // ror $20,X
+        c.X = 10;
+        c.C = 1;
+        c.mem[1] = 0x76;
+        c.mem[2] = 0x20;
+
+        c.mem[0x2A] = 0b00000001;
+
+        driver(c, 6);
+
+        assert(c.mem[0x2A] == 128 && c.C == 1);
+        std::cout << "ZeroPageX: Passed" << std::endl;
+    }
+
+    void AbsoluteX() {
+        CPU c(1, 0);
+
+        // ror $2C3D,X
+        c.X = 2;
+        c.C = 1;
+        c.mem[1] = 0x7E;
+        c.mem[2] = 0x3D;
+        c.mem[3] = 0x2C;
+
+        c.mem[0x2C3F] = 0b00000001;
+
+        driver(c, 7);
+        assert(c.mem[0x2C3F] == 128 && c.C == 1);
+        std::cout << "AbsoluteX: Passed" << std::endl;
+    }
+};

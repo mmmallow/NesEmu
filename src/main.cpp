@@ -3,16 +3,16 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    /*orTest t;
-    t.IndirectX();
+    rorTest t;
+    //t.IndirectX();
     t.ZeroPage();
-    t.Immediate();
-    //t.Accumulator();
+    //t.Immediate();
+    t.Accumulator();
     t.Absolute();
-    t.IndirectY();
+    //t.IndirectY();
     t.ZeroPageX();
-    t.AbsoluteY();
-    t.AbsoluteX();*/
+    //t.AbsoluteY();
+    t.AbsoluteX();
 
    /* 
     branchTest t;
@@ -26,11 +26,11 @@ void Test() {
     t.BVS();
     t.realProgram();*/
 
-    pushPullTest t;
+    /*pushPullTest t;
     t.pha();
     t.php();
     t.pla();
-    t.plp();
+    t.plp();*/
 
     /*brkTest t;
     t.Implied();*/

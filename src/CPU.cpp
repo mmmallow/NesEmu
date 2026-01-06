@@ -222,6 +222,21 @@ void CPU::init() {
 
     // PLP
     instructions[0x28] = std::make_tuple(&CPU::plp, 0);
+
+    // ROL
+    instructions[0x26] = std::make_tuple(&CPU::rol, 0);
+    instructions[0x2A] = std::make_tuple(&CPU::rol, 1);
+    instructions[0x2E] = std::make_tuple(&CPU::rol, 2);
+    instructions[0x36] = std::make_tuple(&CPU::rol, 3);
+    instructions[0x3E] = std::make_tuple(&CPU::rol, 4);
+
+    // ROR
+    instructions[0x66] = std::make_tuple(&CPU::ror, 0);
+    instructions[0x6A] = std::make_tuple(&CPU::ror, 1);
+    instructions[0x6E] = std::make_tuple(&CPU::ror, 2);
+    instructions[0x76] = std::make_tuple(&CPU::ror, 3);
+    instructions[0x7E] = std::make_tuple(&CPU::ror, 4);
+
 }
 
 
@@ -1737,4 +1752,140 @@ void CPU::plp (u8 mode) {
     status = status >> 1;
 
     advanceNClockCycles(4);
+}
+
+void CPU::rol (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 abs_address;
+    u8* value;
+    u8 zp_address;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            zp_address = mem[++PC];
+            value = &(mem[zp_address]);
+            advanceNClockCycles(5);
+            break;
+        // Accumulator
+        case 1:
+            value = &A;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            abs_address = high_byte | low_byte;
+
+            value = &(mem[abs_address]);
+            advanceNClockCycles(6);
+            break;
+        // Zero Page, X
+        case 3:
+            zp_address = mem[++PC];
+            value = &(mem[zp_address + X]);
+            advanceNClockCycles(6);
+            break;
+        // Absolute, X
+        case 4:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            abs_address = high_byte | low_byte;
+            
+            value = &(mem[abs_address + X]);
+            advanceNClockCycles(7);
+            break;
+    }
+
+    PC++;
+
+    // Rotate the value left 1
+    u8 new_c = *value >= 128 ? 1 : 0;
+    *value = *value << 1;
+    *value |= C;
+    C = new_c;
+
+    if (*value == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (*value >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+
+void CPU::ror (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 abs_address;
+    u8* value;
+    u8 zp_address;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            zp_address = mem[++PC];
+            value = &(mem[zp_address]);
+            advanceNClockCycles(5);
+            break;
+        // Accumulator
+        case 1:
+            value = &A;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            abs_address = high_byte | low_byte;
+
+            value = &(mem[abs_address]);
+            advanceNClockCycles(6);
+            break;
+        // Zero Page, X
+        case 3:
+            zp_address = mem[++PC];
+            value = &(mem[zp_address + X]);
+            advanceNClockCycles(6);
+            break;
+        // Absolute, X
+        case 4:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            abs_address = high_byte | low_byte;
+            
+            value = &(mem[abs_address + X]);
+            advanceNClockCycles(7);
+            break;
+    }
+
+    PC++;
+
+    // Rotate the value right 1
+    u8 new_c = *value & 1;
+    *value = *value >> 1;
+    *value |= (C << 7);
+    C = new_c;
+
+    if (*value == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (*value >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
 }

@@ -49,10 +49,16 @@ int main(int argc, char* argv[]) {
     instructions[LDA](1, 16);
     */
 
-    uint16_t t = 0b1000000000000001;
+  /*  uint16_t t = 0b1000000000000001;
 
     uint8_t d = t;
-    std::cout << (int)d << std::endl;
+    std::cout << (int)d << std::endl;*/
+
+    int t[10] = {0};
+    t[3] = 5;
+    int* p = &(t[3]);
+
+    std::cout << *p << std::endl;
 
     return 0;
 }
