@@ -3,7 +3,7 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    orTest t;
+    /*orTest t;
     t.IndirectX();
     t.ZeroPage();
     t.Immediate();
@@ -12,7 +12,7 @@ void Test() {
     t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
-    t.AbsoluteX();
+    t.AbsoluteX();*/
 
    /* 
     branchTest t;
@@ -25,6 +25,12 @@ void Test() {
     t.BVC();
     t.BVS();
     t.realProgram();*/
+
+    pushPullTest t;
+    t.pha();
+    t.php();
+    t.pla();
+    t.plp();
 
     /*brkTest t;
     t.Implied();*/

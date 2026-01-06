@@ -78,7 +78,7 @@ class CPU {
     /************** Helper Methods **************/
     void advanceNClockCycles (int n);
     void pushStack (u8 item);
-    u8 pullStack (u8 item);
+    u8 pullStack();
 
     /*********** Instruction Methods ***********/
     // Load Accumulator
@@ -232,6 +232,20 @@ class CPU {
     // the result in the accumulator.
     // A OR M -> A
     void OR(u8 mode);
+
+    // Push Accumulator on Stack
+    void pha(u8 mode);
+
+    // Push Status Register on Stack
+    void php(u8 mode);
+
+    // Pull Accumulator from Stack
+    // Pulls last value from stack and places it into accumulator
+    void pla(u8 mode);
+
+    // Pull Status Register from Stack
+    // Pulls last value from stack and places it into the status register
+    void plp(u8 mode);
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers

@@ -968,7 +968,7 @@ public:
         driver(c, 11);
 
         assert(c.A == 10);
-        assert(c.mem[(0x1000 | c.S) + 1] == 0b01110101);
+        assert(c.mem[(0x0100 | c.S) + 1] == 0b01110101);
         std::cout << "Implied: Passed" << std::endl;
 
     }
@@ -1929,3 +1929,69 @@ public:
     }
 };
 
+class pushPullTest {
+public:
+
+    void driver(CPU& c, int cycles) {
+        while (c.cycle < cycles) {
+            u8 instruction = c.mem[c.PC];
+            auto instruct = c.instructions[instruction];
+            auto command = std::get<0>(instruct);
+            (c.*command)(std::get<1>(instruct));
+        }
+    }
+
+    void pha() {
+        CPU c(1, 0);
+
+        c.A = 20;
+        c.mem[1] = 0x48;
+
+        driver(c, 3);
+
+        assert(c.mem[0x0100 | c.S + 1] == 20);
+        std::cout << "pha: Passed" << std::endl;
+    }
+
+    void php() {
+        CPU c(1, 0);
+
+        c.N = 1;
+        c.V = 0;
+        c.B = 1;
+        c.I = 1;
+        c.Z = 0;
+        c.C = 1;
+
+        c.mem[1] = 0x08;
+
+        driver(c, 3);
+
+        assert(c.mem[0x0100 | c.S + 1] == 0b10110101);
+        std::cout << "php: Passed" << std::endl;
+    }
+
+    void pla() {
+        CPU c(1, 0);
+
+        c.pushStack(30);
+        c.mem[1] = 0x68;
+
+        driver(c, 4);
+        
+        assert(c.A == 30);
+        std::cout << "pla: Passed" << std::endl;
+    }
+
+    void plp() {
+        CPU c(1, 0);
+
+        c.pushStack(0b11110000);
+        c.mem[1] = 0x28;
+
+        driver(c, 4);
+
+        assert(c.N == 1 && c.V == 1 && c.B == 1 && c.I == 0 && c.Z == 0 && c.C == 0);
+        std::cout << "plp: Passed" << std::endl;
+    }
+};

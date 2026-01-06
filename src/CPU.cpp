@@ -210,6 +210,18 @@ void CPU::init() {
     instructions[0x15] = std::make_tuple(&CPU::OR, 5);
     instructions[0x19] = std::make_tuple(&CPU::OR, 6);
     instructions[0x1d] = std::make_tuple(&CPU::OR, 7);
+
+    // PHA
+    instructions[0x48] = std::make_tuple(&CPU::pha, 0);
+
+    // PHP
+    instructions[0x08] = std::make_tuple(&CPU::php, 0);
+
+    // PLA
+    instructions[0x68] = std::make_tuple(&CPU::pla, 0);
+
+    // PLP
+    instructions[0x28] = std::make_tuple(&CPU::plp, 0);
 }
 
 
@@ -229,15 +241,15 @@ void CPU::advanceNClockCycles (int n) {
 }
 
 void CPU::pushStack (u8 item) {
-    u16 stack_addr = 0x1000 | S;
+    u16 stack_addr = 0x0100 | S;
     mem[stack_addr] = item;
 
     S--;
 }
 
-u8 CPU::pullStack (u8 item) {
+u8 CPU::pullStack() {
     S++;
-    u16 stack_addr = 0x1000 | S;
+    u16 stack_addr = 0x0100 | S;
     
     return mem[stack_addr];
 }
@@ -1655,3 +1667,74 @@ void CPU::OR (u8 mode) {
     }
 }
 
+void CPU::pha (u8 mode) {
+    pushStack(A);
+    advanceNClockCycles(3);
+}
+
+void CPU::php (u8 mode) {
+    // Form Status flags into one word
+    u8 status = 0;
+    status = (status << 1) | N;
+    status = (status << 1) | V;
+    // Constant 1
+    status = (status << 1) | 1;
+    // Set B Flag
+    status = (status << 1) | 1;
+    // Set D Flag to 0 (not used in NES)
+    status = (status << 1) | 0;
+    // Set Interrupt Disable flag
+    status = (status << 1) | 1;
+    status = (status << 1) | Z;
+    status = (status << 1) | C;
+
+    pushStack(status);
+    advanceNClockCycles(3);
+}
+
+void CPU::pla (u8 mode) {
+    A = pullStack();
+
+    if (A == 0) {
+        Z = 1;
+        N = 0;
+    }
+    else if (A >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+    advanceNClockCycles(4);
+}
+
+void CPU::plp (u8 mode) {
+    u8 status = pullStack();
+    C = status & 1;
+    status = status >> 1;
+
+    Z = status & 1;
+    status = status >> 1;
+
+    I = status & 1;
+    status = status >> 1;
+
+    // D Flag (not used so skip)
+    status = status >> 1;
+
+    B = status & 1;
+    status = status >> 1;
+
+    // Constant 1 (skip)
+    status = status >> 1;
+
+    V = status & 1;
+    status = status >> 1;
+
+    N = status & 1;
+    status = status >> 1;
+
+    advanceNClockCycles(4);
+}
