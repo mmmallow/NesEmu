@@ -237,6 +237,11 @@ void CPU::init() {
     instructions[0x76] = std::make_tuple(&CPU::ror, 3);
     instructions[0x7E] = std::make_tuple(&CPU::ror, 4);
 
+    // RTI
+    instructions[0x40] = std::make_tuple(&CPU::rti, 0);
+
+    // RTS
+    instructions[0x60] = std::make_tuple(&CPU::rts, 0);
 }
 
 
@@ -1888,4 +1893,46 @@ void CPU::ror (u8 mode) {
         Z = 0;
         N = 0;
     }
+}
+
+void CPU::rti (u8 mode) {
+    u8 status = pullStack();
+    u8 low_byte = pullStack();
+    u16 high_byte = pullStack();
+    PC = (high_byte << 8) | low_byte;
+
+    C = status & 1;
+    status = status >> 1;
+
+    Z = status & 1;
+    status = status >> 1;
+
+    I = status & 1;
+    status = status >> 1;
+
+    // D Flag (not used so skip)
+    status = status >> 1;
+
+    // Set B to 0 on rti
+    B = 0;
+    status = status >> 1;
+
+    // Constant 1 (skip)
+    status = status >> 1;
+
+    V = status & 1;
+    status = status >> 1;
+
+    N = status & 1;
+    status = status >> 1;
+
+    advanceNClockCycles(6);
+}
+
+void CPU::rts (u8 mode) {
+    u8 low_byte = pullStack();
+    u16 high_byte = pullStack();
+    PC = (high_byte << 8) | low_byte;
+
+    advanceNClockCycles(6);
 }

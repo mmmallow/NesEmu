@@ -259,6 +259,14 @@ class CPU {
     // the lsb becomes the carry flag.
     void ror(u8 mode);
 
+    // Return from Interrupt
+    // Returns the program to where it was before the interrupt occurred.
+    void rti(u8 mode);
+
+    // Return from Subroutine
+    // Returns the program to where it was before the subroutine
+    void rts(u8 mode);
+
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
