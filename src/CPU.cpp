@@ -191,7 +191,25 @@ void CPU::init() {
     instructions[0xB4] = std::make_tuple(&CPU::ldy, 3);
     instructions[0xBC] = std::make_tuple(&CPU::ldy, 4);
 
+    // LSR
+    instructions[0x46] = std::make_tuple(&CPU::lsr, 0);
+    instructions[0x4A] = std::make_tuple(&CPU::lsr, 1);
+    instructions[0x4E] = std::make_tuple(&CPU::lsr, 2);
+    instructions[0x56] = std::make_tuple(&CPU::lsr, 3);
+    instructions[0x5E] = std::make_tuple(&CPU::lsr, 4);
 
+    // NOP
+    instructions[0xEA] = std::make_tuple(&CPU::nop, 0);
+
+    // OR 
+    instructions[0x01] = std::make_tuple(&CPU::OR, 0);
+    instructions[0x05] = std::make_tuple(&CPU::OR, 1);
+    instructions[0x09] = std::make_tuple(&CPU::OR, 2);
+    instructions[0x0d] = std::make_tuple(&CPU::OR, 3);
+    instructions[0x11] = std::make_tuple(&CPU::OR, 4);
+    instructions[0x15] = std::make_tuple(&CPU::OR, 5);
+    instructions[0x19] = std::make_tuple(&CPU::OR, 6);
+    instructions[0x1d] = std::make_tuple(&CPU::OR, 7);
 }
 
 
@@ -1465,3 +1483,175 @@ void CPU::ldy (u8 mode) {
         N = 0;
     }
 }
+
+void CPU::lsr (u8 mode) {
+    // Least significant bit gets stored in Carry flag
+    u8 lsb;
+    u8 current;
+    u16 value;
+    u16 high_byte;
+    u16 low_byte;
+    u8 zp_address;
+    switch (mode) {
+        // Zero Page
+        case 0:
+            zp_address = mem[++PC];
+            lsb = mem[zp_address] & 1;
+            mem[zp_address] = mem[zp_address] >> 1;
+            current = mem[zp_address];
+            advanceNClockCycles(5);
+            break;
+        // Accumulator
+        case 1:
+            lsb = A & 1;
+            A = A >> 1;
+            current = A;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 2:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            lsb = mem[value] & 1;
+            mem[value] = mem[value] >> 1;
+            current = mem[value];
+            advanceNClockCycles(6);
+            break;
+        // Zero Page, X
+        case 3:
+            zp_address = mem[++PC];
+            lsb = mem[zp_address + X] & 1;
+            mem[zp_address + X] = mem[zp_address + X] >> 1;
+            current = mem[zp_address + X];
+            advanceNClockCycles(6);
+            break;
+        // Absolute, X
+        case 4:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            lsb = mem[value + X] & 1;
+            mem[value + X] = mem[value + X] >> 1;
+            current = mem[value + X];
+            advanceNClockCycles(7);
+            break;
+    }
+
+    PC++;
+
+    // Set status flags
+    C = lsb;
+
+    if (current == 0) {
+        Z = 1;
+    }
+    else {
+        Z = 0;
+    }
+
+    // Number will never be negative
+    N = 0;
+}
+
+void CPU::nop (u8 mode) {
+    advanceNClockCycles(2);
+}
+
+void CPU::OR (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 value;
+    u8 zp_address;
+    switch (mode) {
+        // Indirect, X: 
+        case 0:
+            // or ($70,X)
+            // OR the contents of the address stored at $70+X and $70+1+X with A
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address + X];
+            high_byte = mem[zp_address + X + 1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A | mem[value];
+            advanceNClockCycles(6);
+            break;
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            A = A | mem[value];
+            advanceNClockCycles(3);
+            break;
+        // Immediate
+        case 2:
+            value = mem[++PC];
+            A = A | value;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A | mem[value];
+            advanceNClockCycles(4);
+            break;
+        // Indirect, Y
+        case 4:
+            // or ($70),Y
+            // Add Y to the address stored at $70 and $70+1, then OR the contents of the resulting
+            // address with A
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address];
+            high_byte = mem[zp_address+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A | mem[value+Y];
+            advanceNClockCycles(5);
+            break;
+        // Zero Page, X
+        case 5:
+            value = mem[++PC];
+            // Cast value to a u8 so values will wrap around to beginning of Zero Page
+            A = A | mem[(u8)value + X];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, Y
+        case 6:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A | mem[value + Y];
+            advanceNClockCycles(4);
+            break;
+        // Absolute, X
+        case 7:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A | mem[value + X];
+            advanceNClockCycles(4);
+            break;           
+    }
+    PC++;
+    // Set Status flags
+    if (A == 0) {
+        Z = 1;
+        N = 0;
+    }
+    // Largest bit is set
+    else if (A >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+}
+

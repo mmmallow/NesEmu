@@ -3,15 +3,16 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    ldyTest t;
-    //t.IndirectX();
+    orTest t;
+    t.IndirectX();
     t.ZeroPage();
     t.Immediate();
+    //t.Accumulator();
     t.Absolute();
-    //t.IndirectY();
+    t.IndirectY();
     t.ZeroPageX();
+    t.AbsoluteY();
     t.AbsoluteX();
-    //t.AbsoluteX();*/
 
    /* 
     branchTest t;

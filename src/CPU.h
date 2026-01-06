@@ -217,6 +217,22 @@ class CPU {
     // Loads the given memory address into the Y register
     void ldy(u8 mode);
 
+    // Shift 1 Bit Right
+    // Shifts value given or value at mem address given right
+    // by 1 bit
+    void lsr(u8 mode);
+
+    // No Operation
+    // Um...pretty obvious what this does I think
+    void nop(u8 mode);
+
+    // OR
+    // Bitwise ors either the value given or the value at the
+    // mem address given with the accumulator, then stores
+    // the result in the accumulator.
+    // A OR M -> A
+    void OR(u8 mode);
+
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
     * to the instruction methods and u8's for the addressing modes
