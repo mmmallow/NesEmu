@@ -242,6 +242,16 @@ void CPU::init() {
 
     // RTS
     instructions[0x60] = std::make_tuple(&CPU::rts, 0);
+
+    // SBC
+    instructions[0xE1] = std::make_tuple(&CPU::sbc, 0);
+    instructions[0xE5] = std::make_tuple(&CPU::sbc, 1);
+    instructions[0xE9] = std::make_tuple(&CPU::sbc, 2);
+    instructions[0xEd] = std::make_tuple(&CPU::sbc, 3);
+    instructions[0xF1] = std::make_tuple(&CPU::sbc, 4);
+    instructions[0xF5] = std::make_tuple(&CPU::sbc, 5);
+    instructions[0xF9] = std::make_tuple(&CPU::sbc, 6);
+    instructions[0xFd] = std::make_tuple(&CPU::sbc, 7);
 }
 
 
@@ -455,7 +465,6 @@ void CPU::adc (u8 mode) {
     if (A == 0) {
         Z = 1;
         N = 0;
-        
     }
     else if (A >= 128) {
         N = 1;
@@ -466,14 +475,18 @@ void CPU::adc (u8 mode) {
         N = 0;
     }
 
-    if (previous_A + value + C >= 256) {
-        V = 1;
+    int int_result = previous_A + value + C;
+    // Check if outside of unsigned range
+    if (int_result >= 256)
         C = 1;
-    }
-    else {
-        V = 0;
+    else
         C = 0;
-    }
+
+    // Check if outside signed range
+    if (int_result < -128 || int_result > 127)
+        V = 1;
+    else
+        V = 0;
 }
 
 void CPU::AND (u8 mode) {
@@ -1937,3 +1950,115 @@ void CPU::rts (u8 mode) {
 
     advanceNClockCycles(6);
 }
+
+void CPU::sbc (u8 mode) {
+    u16 high_byte;
+    u16 low_byte;
+    u16 value;
+    u8 zp_address;
+    int previous_A = A;
+    // C is inverted for this instruction
+    C = 1 - C;
+    switch (mode) {
+        // Indirect, X
+        case 0:
+            // sbc ($70,X)
+            // Subtract the contents of the address stored at $70+X and $70+1+X from A and C
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address + X];
+            high_byte = mem[zp_address + X + 1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A - mem[value] - C;
+            advanceNClockCycles(6);
+            break;
+        // Zero Page
+        case 1:
+            value = mem[++PC];
+            A = A - mem[value] - C;
+            advanceNClockCycles(3);
+            break;
+        // Immediate
+        case 2:
+            value = mem[++PC];
+            A = A - value - C;
+            advanceNClockCycles(2);
+            break;
+        // Absolute
+        case 3:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A - mem[value] - C;
+            advanceNClockCycles(4);
+            break;
+        // Indirect, Y
+        case 4:
+            // sbc ($70),Y
+            // Add Y to the address stored at $70 and $70+1, then subtract the contents of the resulting
+            // address from A and C
+            zp_address = mem[++PC];
+            low_byte = mem[zp_address];
+            high_byte = mem[zp_address+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A - mem[value+Y] - C;
+            advanceNClockCycles(5);
+            break;
+        // Zero Page, X
+        case 5:
+            value = mem[++PC];
+            // Cast value to a u8 so values will wrap around to beginning of Zero Page
+            A = A - mem[(u8)value + X] - C;
+            advanceNClockCycles(4);
+            break;
+        // Absolute, Y
+        case 6:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A - mem[value + Y] - C;
+            advanceNClockCycles(4);
+            break;
+        // Absolute, X
+        case 7:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            A = A - mem[value + X] - C;
+            advanceNClockCycles(4);
+            break;
+    }
+    PC++;
+    if (A == 0) {
+        Z = 1;
+        N = 0;
+        
+    }
+    else if (A >= 128) {
+        N = 1;
+        Z = 0;
+    }
+    else {
+        Z = 0;
+        N = 0;
+    }
+
+    int int_result = previous_A - value - C;
+
+    // Set C if result is not negative
+    if (int_result > 0)
+        C = 1;
+    else
+        C = 0;
+
+    // Check if outside signed range
+    if (int_result < -128 || int_result > 127)
+        V = 1;
+    else
+        V = 0;
+}
+

@@ -54,11 +54,20 @@ int main(int argc, char* argv[]) {
     uint8_t d = t;
     std::cout << (int)d << std::endl;*/
 
-    int t[10] = {0};
+    /*int t[10] = {0};
     t[3] = 5;
     int* p = &(t[3]);
 
-    std::cout << *p << std::endl;
+    std::cout << *p << std::endl;*/
+
+    uint16_t value = 0x1;
+    uint8_t A = 0xFF;
+    uint8_t C = 0;
+
+    uint8_t diff = A - value - C;
+
+    std::cout << ((int)(diff) >= 128) << std::endl;
+    std::cout << (int)diff << std::endl;
 
     return 0;
 }

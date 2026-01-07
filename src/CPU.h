@@ -267,6 +267,8 @@ class CPU {
     // Returns the program to where it was before the subroutine
     void rts(u8 mode);
 
+    // Subtract Memory from Accumulator with Borrow
+    void sbc(u8 mode);
 
     /************* Instruction Set ***************
     * The instructions array holds tuples of function pointers
@@ -280,4 +282,4 @@ class CPU {
     std::tuple<Fp, u8> instructions[256];
 };
 
-#endif // _CPU_H_
+#endif // _CPU_H_'

@@ -3,16 +3,16 @@
 #include "tests/InstructionsTest.cpp"
 
 void Test() {
-    /*rorTest t;
-    //t.IndirectX();
+    sbcTest t;
+    t.IndirectX();
     t.ZeroPage();
-    //t.Immediate();
-    t.Accumulator();
+    t.Immediate();
+    //t.Accumulator();
     t.Absolute();
-    //t.IndirectY();
+    t.IndirectY();
     t.ZeroPageX();
-    //t.AbsoluteY();
-    t.AbsoluteX();*/
+    t.AbsoluteY();
+    t.AbsoluteX();
 
    /* 
     branchTest t;
@@ -46,9 +46,9 @@ void Test() {
     t2.Inx();
     t2.Iny();*/
 
-    returnTest t;
+    /*returnTest t;
     t.rti();
-    t.rts();
+    t.rts();*/
 }
 
 int main (int argc, char* argv[]) {
