@@ -2222,4 +2222,24 @@ public:
         assert(c.A == 11);
         std::cout << "RTI: Passed" << std::endl;
     }
+
+    void rts() {
+        CPU c(1, 0);
+
+        // jsr
+        c.mem[1] = 0x20;
+        c.mem[2] = 0x39;
+        c.mem[3] = 0x6E;
+
+        // lda #$A
+        c.mem[0x6E39] = 0xA9;
+        c.mem[0x6E3A] = 0xA;
+        // rts
+        c.mem[0x6E3B] = 0x60;
+
+        driver(c, 14);
+
+        assert(c.A == 10 && c.PC == 4);
+        std::cout << "RTS: Passed" << std::endl;
+    }
 };

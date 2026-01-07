@@ -48,6 +48,7 @@ void Test() {
 
     returnTest t;
     t.rti();
+    t.rts();
 }
 
 int main (int argc, char* argv[]) {

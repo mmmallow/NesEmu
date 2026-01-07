@@ -1383,10 +1383,11 @@ void CPU::jmp (u8 mode) {
 
 void CPU::jsr (u8 mode) {
     u16 low_byte = mem[++PC];
-    // Use PC+1, not ++PC, so that current PC will be return address of subroutine
-    u16 high_byte = mem[PC+1];
+    u16 high_byte = mem[++PC];
     high_byte = high_byte << 8;
     u16 value = high_byte | low_byte;
+    // Return address
+    PC++;
     u8 pc_low_byte = PC;
     u8 pc_high_byte = PC >> 8;
     
