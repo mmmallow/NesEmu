@@ -41,6 +41,31 @@ typedef void (CPU::*Fp)(u8);
 
 class CPU {
     public:
+
+    enum AddressingMode {
+        IndirectX,
+        ZeroPage,
+        Immediate,
+        Absolute,
+        IndirectY,
+        ZeroPageX,
+        AbsoluteY,
+        AbsoluteX,
+        Accumulator,
+        Relative,
+        Implied,
+        Indirect
+    };
+
+    typedef struct Instruction {
+        Fp instruction;
+        AddressingMode mode;
+
+        Instruction (Fp i, AddressingMode m)
+        : instruction(i),
+          mode (m)
+        { }
+    }
     
     CPU(u8 prg_start_low, u8 prg_start_high);
     ~CPU();
@@ -79,6 +104,7 @@ class CPU {
     void advanceNClockCycles (int n);
     void pushStack (u8 item);
     u8 pullStack();
+    u8* fetch();
 
     /*********** Instruction Methods ***********/
     // Load Accumulator
@@ -271,15 +297,15 @@ class CPU {
     void sbc(u8 mode);
 
     /************* Instruction Set ***************
-    * The instructions array holds tuples of function pointers
-    * to the instruction methods and u8's for the addressing modes
-    * of that specific instruction. Each index corresponds to the 
-    * instruction at the location in the instruction table (that 
-    * instruction's op code)
+    * The instructions array holds Instruction struct containing
+    * function pointers to the instruction methods and an enum for the 
+    * addressing modes of that specific instruction. Each index 
+    * corresponds to the instruction at the location in the instruction 
+    * table (that instruction's op code)
     * https://www.masswerk.at/6502/6502_instruction_set.html
     * **********************************************/
 
-    std::tuple<Fp, u8> instructions[256];
+    Instruction instructions[256];
 };
 
 #endif // _CPU_H_'

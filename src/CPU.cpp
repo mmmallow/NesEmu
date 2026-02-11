@@ -55,203 +55,215 @@ void CPU::init() {
 
     // Initialize the instruction set
     // LDA
-    instructions[0xa1] = std::make_tuple(&CPU::lda, 0);
-    instructions[0xa5] = std::make_tuple(&CPU::lda, 1);
-    instructions[0xa9] = std::make_tuple(&CPU::lda, 2);
-    instructions[0xad] = std::make_tuple(&CPU::lda, 3);
-    instructions[0xb1] = std::make_tuple(&CPU::lda, 4);
-    instructions[0xb5] = std::make_tuple(&CPU::lda, 5);
-    instructions[0xb9] = std::make_tuple(&CPU::lda, 6);
-    instructions[0xbd] = std::make_tuple(&CPU::lda, 7);
+    instructions[0xa1] = Instruction(&CPU::lda, IndirectX);
+    instructions[0xa5] = Instruction(&CPU::lda, ZeroPage);
+    instructions[0xa9] = Instruction(&CPU::lda, Immediate);
+    instructions[0xad] = Instruction(&CPU::lda, Absolute);
+    instructions[0xb1] = Instruction(&CPU::lda, IndirectY);
+    instructions[0xb5] = Instruction(&CPU::lda, ZeroPageX);
+    instructions[0xb9] = Instruction(&CPU::lda, AbsoluteY);
+    instructions[0xbd] = Instruction(&CPU::lda, AbsoluteX);
 
     // ADC
-    instructions[0x61] = std::make_tuple(&CPU::adc, 0);
-    instructions[0x65] = std::make_tuple(&CPU::adc, 1);
-    instructions[0x69] = std::make_tuple(&CPU::adc, 2);
-    instructions[0x6d] = std::make_tuple(&CPU::adc, 3);
-    instructions[0x71] = std::make_tuple(&CPU::adc, 4);
-    instructions[0x75] = std::make_tuple(&CPU::adc, 5);
-    instructions[0x79] = std::make_tuple(&CPU::adc, 6);
-    instructions[0x7d] = std::make_tuple(&CPU::adc, 7);
+    instructions[0x61] = Instruction(&CPU::adc, IndirectX);
+    instructions[0x65] = Instruction(&CPU::adc, ZeroPage);
+    instructions[0x69] = Instruction(&CPU::adc, Immediate);
+    instructions[0x6d] = Instruction(&CPU::adc, Absolute);
+    instructions[0x71] = Instruction(&CPU::adc, IndirectY);
+    instructions[0x75] = Instruction(&CPU::adc, ZeroPageX);
+    instructions[0x79] = Instruction(&CPU::adc, AbsoluteY);
+    instructions[0x7d] = Instruction(&CPU::adc, AbsoluteX);
 
     // AND
-    instructions[0x21] = std::make_tuple(&CPU::AND, 0);
-    instructions[0x25] = std::make_tuple(&CPU::AND, 1);
-    instructions[0x29] = std::make_tuple(&CPU::AND, 2);
-    instructions[0x2d] = std::make_tuple(&CPU::AND, 3);
-    instructions[0x31] = std::make_tuple(&CPU::AND, 4);
-    instructions[0x35] = std::make_tuple(&CPU::AND, 5);
-    instructions[0x39] = std::make_tuple(&CPU::AND, 6);
-    instructions[0x3d] = std::make_tuple(&CPU::AND, 7);
+    instructions[0x21] = Instruction(&CPU::AND, IndirectX);
+    instructions[0x25] = Instruction(&CPU::AND, ZeroPage);
+    instructions[0x29] = Instruction(&CPU::AND, Immediate);
+    instructions[0x2d] = Instruction(&CPU::AND, Absolute);
+    instructions[0x31] = Instruction(&CPU::AND, IndirectY);
+    instructions[0x35] = Instruction(&CPU::AND, ZeroPageX);
+    instructions[0x39] = Instruction(&CPU::AND, AbsoluteY);
+    instructions[0x3d] = Instruction(&CPU::AND, AbsoluteX);
 
     // ASL
-    instructions[0x06] = std::make_tuple(&CPU::asl, 0);
-    instructions[0x0A] = std::make_tuple(&CPU::asl, 1);
-    instructions[0x0E] = std::make_tuple(&CPU::asl, 2);
-    instructions[0x16] = std::make_tuple(&CPU::asl, 3);
-    instructions[0x1E] = std::make_tuple(&CPU::asl, 4);
+    instructions[0x06] = Instruction(&CPU::asl, ZeroPage);
+    instructions[0x0A] = Instruction(&CPU::asl, Accumulator);
+    instructions[0x0E] = Instruction(&CPU::asl, Absolute);
+    instructions[0x16] = Instruction(&CPU::asl, ZeroPageX);
+    instructions[0x1E] = Instruction(&CPU::asl, AbsoluteX);
 
     // Branch
     // BCC
-    instructions[0x90] = std::make_tuple(&CPU::bcc, 0);
+    instructions[0x90] = Instruction(&CPU::bcc, Relative);
     // BCS
-    instructions[0xB0] = std::make_tuple(&CPU::bcs, 0);
+    instructions[0xB0] = Instruction(&CPU::bcs, Relative);
     // BEQ
-    instructions[0xF0] = std::make_tuple(&CPU::beq, 0);
+    instructions[0xF0] = Instruction(&CPU::beq, Relative);
     // BMI
-    instructions[0x30] = std::make_tuple(&CPU::bmi, 0);
+    instructions[0x30] = Instruction(&CPU::bmi, Relative);
     // BNE
-    instructions[0xD0] = std::make_tuple(&CPU::bne, 0);
+    instructions[0xD0] = Instruction(&CPU::bne, Relative);
     // BPL
-    instructions[0x10] = std::make_tuple(&CPU::bpl, 0);
+    instructions[0x10] = Instruction(&CPU::bpl, Relative);
     // BVC
-    instructions[0x50] = std::make_tuple(&CPU::bvc, 0);
+    instructions[0x50] = Instruction(&CPU::bvc, Relative);
     // BVS
-    instructions[0x70] = std::make_tuple(&CPU::bvs, 0);
+    instructions[0x70] = Instruction(&CPU::bvs, Relative);
 
     // BIT
-    instructions[0x24] = std::make_tuple(&CPU::bit, 0);
-    instructions[0x2C] = std::make_tuple(&CPU::bit, 1);
+    instructions[0x24] = Instruction(&CPU::bit, ZeroPage);
+    instructions[0x2C] = Instruction(&CPU::bit, Absolute);
 
     // BRK
-    instructions[0x00] = std::make_tuple(&CPU::brk, 0);
+    instructions[0x00] = Instruction(&CPU::brk, Implied);
+
+    // CLC
+    instructions[0x18] = Instruction(&CPU::clc, Implied);
+
+    // CLD
+    instructions[0xD8] = Instruction(&CPU::cld, Implied);
+
+    // CLI
+    instructions[0x58] = Instruction(&CPU::cli, Implied);
+
+    // CLV
+    instructions[0xB8] = Instruction(&CPU::clv, Implied);
 
     // CMP
-    instructions[0xc1] = std::make_tuple(&CPU::cmp, 0);
-    instructions[0xc5] = std::make_tuple(&CPU::cmp, 1);
-    instructions[0xc9] = std::make_tuple(&CPU::cmp, 2);
-    instructions[0xcd] = std::make_tuple(&CPU::cmp, 3);
-    instructions[0xd1] = std::make_tuple(&CPU::cmp, 4);
-    instructions[0xd5] = std::make_tuple(&CPU::cmp, 5);
-    instructions[0xd9] = std::make_tuple(&CPU::cmp, 6);
-    instructions[0xdd] = std::make_tuple(&CPU::cmp, 7);
+    instructions[0xc1] = Instruction(&CPU::cmp, IndirectX);
+    instructions[0xc5] = Instruction(&CPU::cmp, ZeroPage);
+    instructions[0xc9] = Instruction(&CPU::cmp, Immediate);
+    instructions[0xcd] = Instruction(&CPU::cmp, Absolute);
+    instructions[0xd1] = Instruction(&CPU::cmp, IndirectY);
+    instructions[0xd5] = Instruction(&CPU::cmp, ZeroPageX);
+    instructions[0xd9] = Instruction(&CPU::cmp, AbsoluteY);
+    instructions[0xdd] = Instruction(&CPU::cmp, AbsoluteY);
 
     // CPX
-    instructions[0xE0] = std::make_tuple(&CPU::cpx, 0);
-    instructions[0xE4] = std::make_tuple(&CPU::cpx, 1);
-    instructions[0xEC] = std::make_tuple(&CPU::cpx, 2);
+    instructions[0xE0] = Instruction(&CPU::cpx, Immediate);
+    instructions[0xE4] = Instruction(&CPU::cpx, ZeroPage);
+    instructions[0xEC] = Instruction(&CPU::cpx, Absolute);
 
     // CPY
-    instructions[0xC0] = std::make_tuple(&CPU::cpy, 0);
-    instructions[0xC4] = std::make_tuple(&CPU::cpy, 1);
-    instructions[0xCC] = std::make_tuple(&CPU::cpy, 2);
+    instructions[0xC0] = Instruction(&CPU::cpy, Immediate);
+    instructions[0xC4] = Instruction(&CPU::cpy, ZeroPage);
+    instructions[0xCC] = Instruction(&CPU::cpy, Absolute);
 
     // DEC
-    instructions[0xC6] = std::make_tuple(&CPU::dec, 0);
-    instructions[0xCE] = std::make_tuple(&CPU::dec, 1);
-    instructions[0xD6] = std::make_tuple(&CPU::dec, 2);
-    instructions[0xDE] = std::make_tuple(&CPU::dec, 3);
+    instructions[0xC6] = Instruction(&CPU::dec, ZeroPage);
+    instructions[0xCE] = Instruction(&CPU::dec, Absolute);
+    instructions[0xD6] = Instruction(&CPU::dec, ZeroPageX);
+    instructions[0xDE] = Instruction(&CPU::dec, AbsoluteX);
 
     // DEX
-    instructions[0xCA] = std::make_tuple(&CPU::dex, 0);
+    instructions[0xCA] = Instruction(&CPU::dex, Implied);
     
     // DEY
-    instructions[0x88] = std::make_tuple(&CPU::dey, 0);
+    instructions[0x88] = Instruction(&CPU::dey, Implied);
 
     // EOR
-    instructions[0x41] = std::make_tuple(&CPU::eor, 0);
-    instructions[0x45] = std::make_tuple(&CPU::eor, 1);
-    instructions[0x49] = std::make_tuple(&CPU::eor, 2);
-    instructions[0x4D] = std::make_tuple(&CPU::eor, 3);
-    instructions[0x51] = std::make_tuple(&CPU::eor, 4);
-    instructions[0x55] = std::make_tuple(&CPU::eor, 5);
-    instructions[0x59] = std::make_tuple(&CPU::eor, 6);
-    instructions[0x5D] = std::make_tuple(&CPU::eor, 7);
+    instructions[0x41] = Instruction(&CPU::eor, IndirectX);
+    instructions[0x45] = Instruction(&CPU::eor, ZeroPage);
+    instructions[0x49] = Instruction(&CPU::eor, Immediate);
+    instructions[0x4D] = Instruction(&CPU::eor, Absolute);
+    instructions[0x51] = Instruction(&CPU::eor, IndirectY);
+    instructions[0x55] = Instruction(&CPU::eor, ZeroPageX);
+    instructions[0x59] = Instruction(&CPU::eor, AbsoluteY);
+    instructions[0x5D] = Instruction(&CPU::eor, AbsoluteX);
 
     // INC
-    instructions[0xE6] = std::make_tuple(&CPU::inc, 0);
-    instructions[0xEE] = std::make_tuple(&CPU::inc, 1);
-    instructions[0xF6] = std::make_tuple(&CPU::inc, 2);
-    instructions[0xFE] = std::make_tuple(&CPU::inc, 3);
+    instructions[0xE6] = Instruction(&CPU::inc, ZeroPage);
+    instructions[0xEE] = Instruction(&CPU::inc, Absolute);
+    instructions[0xF6] = Instruction(&CPU::inc, ZeroPageX);
+    instructions[0xFE] = Instruction(&CPU::inc, AbsoluteX);
 
     // INX
-    instructions[0xE8] = std::make_tuple(&CPU::inx, 0);
+    instructions[0xE8] = Instruction(&CPU::inx, Implied);
 
     // INY
-    instructions[0xC8] = std::make_tuple(&CPU::iny, 0);
+    instructions[0xC8] = Instruction(&CPU::iny, Implied);
 
     // JMP
-    instructions[0x4C] = std::make_tuple(&CPU::jmp, 0);
-    instructions[0x6C] = std::make_tuple(&CPU::jmp, 1);
+    instructions[0x4C] = Instruction(&CPU::jmp, Absolute);
+    instructions[0x6C] = Instruction(&CPU::jmp, Indirect);
 
     // JSR
-    instructions[0x20] = std::make_tuple(&CPU::jsr, 0);
+    instructions[0x20] = Instruction(&CPU::jsr, Absolute);
 
     // LDX
-    instructions[0xA2] = std::make_tuple(&CPU::ldx, 0);
-    instructions[0xA6] = std::make_tuple(&CPU::ldx, 1);
-    instructions[0xAE] = std::make_tuple(&CPU::ldx, 2);
-    instructions[0xB6] = std::make_tuple(&CPU::ldx, 3);
-    instructions[0xBE] = std::make_tuple(&CPU::ldx, 4);
+    instructions[0xA2] = Instruction(&CPU::ldx, Immediate);
+    instructions[0xA6] = Instruction(&CPU::ldx, ZeroPage);
+    instructions[0xAE] = Instruction(&CPU::ldx, Absolute);
+    instructions[0xB6] = Instruction(&CPU::ldx, ZeroPageY);
+    instructions[0xBE] = Instruction(&CPU::ldx, AbsoluteY);
 
     // LDY
-    instructions[0xA0] = std::make_tuple(&CPU::ldy, 0);
-    instructions[0xA4] = std::make_tuple(&CPU::ldy, 1);
-    instructions[0xAC] = std::make_tuple(&CPU::ldy, 2);
-    instructions[0xB4] = std::make_tuple(&CPU::ldy, 3);
-    instructions[0xBC] = std::make_tuple(&CPU::ldy, 4);
+    instructions[0xA0] = Instruction(&CPU::ldy, Immediate);
+    instructions[0xA4] = Instruction(&CPU::ldy, ZeroPage);
+    instructions[0xAC] = Instruction(&CPU::ldy, Absolute);
+    instructions[0xB4] = Instruction(&CPU::ldy, ZeroPageX);
+    instructions[0xBC] = Instruction(&CPU::ldy, AbsoluteX);
 
     // LSR
-    instructions[0x46] = std::make_tuple(&CPU::lsr, 0);
-    instructions[0x4A] = std::make_tuple(&CPU::lsr, 1);
-    instructions[0x4E] = std::make_tuple(&CPU::lsr, 2);
-    instructions[0x56] = std::make_tuple(&CPU::lsr, 3);
-    instructions[0x5E] = std::make_tuple(&CPU::lsr, 4);
+    instructions[0x46] = Instruction(&CPU::lsr, ZeroPage);
+    instructions[0x4A] = Instruction(&CPU::lsr, Accumulator);
+    instructions[0x4E] = Instruction(&CPU::lsr, Absolute);
+    instructions[0x56] = Instruction(&CPU::lsr, ZeroPageX);
+    instructions[0x5E] = Instruction(&CPU::lsr, AbsoluteX);
 
     // NOP
-    instructions[0xEA] = std::make_tuple(&CPU::nop, 0);
+    instructions[0xEA] = Instruction(&CPU::nop, Implied);
 
     // OR 
-    instructions[0x01] = std::make_tuple(&CPU::OR, 0);
-    instructions[0x05] = std::make_tuple(&CPU::OR, 1);
-    instructions[0x09] = std::make_tuple(&CPU::OR, 2);
-    instructions[0x0d] = std::make_tuple(&CPU::OR, 3);
-    instructions[0x11] = std::make_tuple(&CPU::OR, 4);
-    instructions[0x15] = std::make_tuple(&CPU::OR, 5);
-    instructions[0x19] = std::make_tuple(&CPU::OR, 6);
-    instructions[0x1d] = std::make_tuple(&CPU::OR, 7);
+    instructions[0x01] = Instruction(&CPU::OR, IndirectX);
+    instructions[0x05] = Instruction(&CPU::OR, ZeroPage);
+    instructions[0x09] = Instruction(&CPU::OR, Immediate);
+    instructions[0x0d] = Instruction(&CPU::OR, Absolute);
+    instructions[0x11] = Instruction(&CPU::OR, IndirectY);
+    instructions[0x15] = Instruction(&CPU::OR, ZeroPageX);
+    instructions[0x19] = Instruction(&CPU::OR, AbsoluteY);
+    instructions[0x1d] = Instruction(&CPU::OR, AbsoluteX);
 
     // PHA
-    instructions[0x48] = std::make_tuple(&CPU::pha, 0);
+    instructions[0x48] = Instruction(&CPU::pha, Implied);
 
     // PHP
-    instructions[0x08] = std::make_tuple(&CPU::php, 0);
+    instructions[0x08] = Instruction(&CPU::php, Implied);
 
     // PLA
-    instructions[0x68] = std::make_tuple(&CPU::pla, 0);
+    instructions[0x68] = Instruction(&CPU::pla, Implied);
 
     // PLP
-    instructions[0x28] = std::make_tuple(&CPU::plp, 0);
+    instructions[0x28] = Instruction(&CPU::plp, Implied);
 
     // ROL
-    instructions[0x26] = std::make_tuple(&CPU::rol, 0);
-    instructions[0x2A] = std::make_tuple(&CPU::rol, 1);
-    instructions[0x2E] = std::make_tuple(&CPU::rol, 2);
-    instructions[0x36] = std::make_tuple(&CPU::rol, 3);
-    instructions[0x3E] = std::make_tuple(&CPU::rol, 4);
+    instructions[0x26] = Instruction(&CPU::rol, ZeroPage);
+    instructions[0x2A] = Instruction(&CPU::rol, Accumulator);
+    instructions[0x2E] = Instruction(&CPU::rol, Absolute);
+    instructions[0x36] = Instruction(&CPU::rol, ZeroPageX);
+    instructions[0x3E] = Instruction(&CPU::rol, AbsoluteX);
 
     // ROR
-    instructions[0x66] = std::make_tuple(&CPU::ror, 0);
-    instructions[0x6A] = std::make_tuple(&CPU::ror, 1);
-    instructions[0x6E] = std::make_tuple(&CPU::ror, 2);
-    instructions[0x76] = std::make_tuple(&CPU::ror, 3);
-    instructions[0x7E] = std::make_tuple(&CPU::ror, 4);
+    instructions[0x66] = Instruction(&CPU::ror, ZeroPage);
+    instructions[0x6A] = Instruction(&CPU::ror, Accumulator);
+    instructions[0x6E] = Instruction(&CPU::ror, Absolute);
+    instructions[0x76] = Instruction(&CPU::ror, ZeroPageX);
+    instructions[0x7E] = Instruction(&CPU::ror, AbsoluteX);
 
     // RTI
-    instructions[0x40] = std::make_tuple(&CPU::rti, 0);
+    instructions[0x40] = Instruction(&CPU::rti, Implied);
 
     // RTS
-    instructions[0x60] = std::make_tuple(&CPU::rts, 0);
+    instructions[0x60] = Instruction(&CPU::rts, Implied);
 
     // SBC
-    instructions[0xE1] = std::make_tuple(&CPU::sbc, 0);
-    instructions[0xE5] = std::make_tuple(&CPU::sbc, 1);
-    instructions[0xE9] = std::make_tuple(&CPU::sbc, 2);
-    instructions[0xEd] = std::make_tuple(&CPU::sbc, 3);
-    instructions[0xF1] = std::make_tuple(&CPU::sbc, 4);
-    instructions[0xF5] = std::make_tuple(&CPU::sbc, 5);
-    instructions[0xF9] = std::make_tuple(&CPU::sbc, 6);
-    instructions[0xFd] = std::make_tuple(&CPU::sbc, 7);
+    instructions[0xE1] = Instruction(&CPU::sbc, IndirectX);
+    instructions[0xE5] = Instruction(&CPU::sbc, ZeroPage);
+    instructions[0xE9] = Instruction(&CPU::sbc, Immediate);
+    instructions[0xEd] = Instruction(&CPU::sbc, Absolute);
+    instructions[0xF1] = Instruction(&CPU::sbc, IndirectY);
+    instructions[0xF5] = Instruction(&CPU::sbc, ZeroPageX);
+    instructions[0xF9] = Instruction(&CPU::sbc, AbsoluteY);
+    instructions[0xFd] = Instruction(&CPU::sbc, AbsoluteX);
 }
 
 
@@ -284,86 +296,100 @@ u8 CPU::pullStack() {
     return mem[stack_addr];
 }
 
-/******************* Instructions *******************/
-
-void CPU::lda (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
+u8* CPU::fetch() {
+    // Get Addressing Mode
+    u8 op_code = mem[PC];
+    AddressingMode mode = instructions[op_code].mode;
+    
     switch (mode) {
-        // Indirect, X: 
-        case 0:
-            // lda ($70,X)
-            // Load the contents of the address stored at $70+X and $70+1+X into A
+        u8* value;
+        u16 high_byte;
+        u16 low_byte;
+        u8 zp_address;
+        u16 address;
+        case IndirectX:
+            // Fetch contents of address stored at $## + X and $## + X + 1
             zp_address = mem[++PC];
             low_byte = mem[zp_address + X];
             high_byte = mem[zp_address + X + 1];
             high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = mem[value];
-            advanceNClockCycles(6);
+            address = high_byte | low_byte;
+            value = &(mem[address]);
             break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            A = mem[value];
-            advanceNClockCycles(3);
+        case ZeroPage:
+            // Fetch contents of address stored in first 256 bytes
+            zp_address = mem[++PC];
+            value = &(mem[zp_address]);
             break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            A = value;
-            advanceNClockCycles(2);
+        case Immediate:
+            // Return value given
+            value = &(mem[++PC]);
             break;
-        // Absolute
-        case 3:
+        case Absolute:
+            // Fetch contents of address stored at $XXXX
             low_byte = mem[++PC];
             high_byte = mem[++PC];
             high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = mem[value];
-            advanceNClockCycles(4);
+            address = high_byte | low_byte;
+            value = &(mem[address]);
             break;
-        // Indirect, Y
-        case 4:
-            // lda ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then store the contents of the resulting
-            // address in A
+        case IndirectY:
             zp_address = mem[++PC];
             low_byte = mem[zp_address];
             high_byte = mem[zp_address+1];
             high_byte = high_byte << 8;
+            address = high_byte | low_byte;
+            value = &(mem[address + Y]);
+            break;
+        case ZeroPageX:
+            zp_address = mem[++PC];
+            value = &(mem[zp_address + X]);
+            break;
+        case AbsoluteY:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            address = high_byte | low_byte;
+            value = &(mem[address + Y]);
+            break;
+        case AbsoluteX:
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
+            address = high_byte | low_byte;
+            value = &(mem[address + X]);
+            break;
+        case Indirect:
+            // Available only for jump instruction
+            // Set the PC to the address stored at the address given by the programmer
+            low_byte = mem[++PC];
+            high_byte = mem[++PC];
+            high_byte = high_byte << 8;
             value = high_byte | low_byte;
-            A = mem[value+Y];
+            // Address stored at the address given
+            low_byte = mem[value];
+            high_byte = mem[value+1];
+            high_byte = high_byte << 8;
+            value = high_byte | low_byte;
+            PC = value;
             advanceNClockCycles(5);
             break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            A = mem[(u8)value + X];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = mem[value + Y];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = mem[value + X];
-            advanceNClockCycles(4);
-            break;           
     }
+
+    return value;
+}
+
+/******************* Instructions *******************/
+
+/*****************
+* TODO:
+* - Go through methods and replaces switch statements with call to fetch
+* - Find number of clock cycles each addressing mode takes when fetching
+*****************/
+
+void CPU::lda (u8 mode) {
+    u8* value = fetch();
+    A = *value;
     PC++;
     // Set Status flags
     if (A == 0) {
@@ -383,84 +409,11 @@ void CPU::lda (u8 mode) {
 
 
 void CPU::adc (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
     int previous_A = A;
-    switch (mode) {
-        // Indirect, X
-        case 0:
-            // adc ($70,X)
-            // Add the contents of the address stored at $70+X and $70+1+X with A and C
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address + X];
-            high_byte = mem[zp_address + X + 1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A + mem[value] + C;
-            advanceNClockCycles(6);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            A = A + mem[value] + C;
-            advanceNClockCycles(3);
-            break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            A = A + value + C;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A + mem[value] + C;
-            advanceNClockCycles(4);
-            break;
-        // Indirect, Y
-        case 4:
-            // adc ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then add the contents of the resulting
-            // address to A and C
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address];
-            high_byte = mem[zp_address+1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A + mem[value+Y] + C;
-            advanceNClockCycles(5);
-            break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            A = A + mem[(u8)value + X] + C;
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A + mem[value + Y] + C;
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A + mem[value + X] + C;
-            advanceNClockCycles(4);
-            break;
-    }
+
+    u8* value = fetch();
+    A = *value + A + C;
+
     PC++;
     if (A == 0) {
         Z = 1;
@@ -475,7 +428,7 @@ void CPU::adc (u8 mode) {
         N = 0;
     }
 
-    int int_result = previous_A + value + C;
+    int int_result = previous_A + *value + C;
     // Check if outside of unsigned range
     if (int_result >= 256)
         C = 1;
@@ -490,83 +443,9 @@ void CPU::adc (u8 mode) {
 }
 
 void CPU::AND (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
-    switch (mode) {
-        // Indirect, X: 
-        case 0:
-            // and ($70,X)
-            // AND the contents of the address stored at $70+X and $70+1+X with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address + X];
-            high_byte = mem[zp_address + X + 1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A & mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            A = A & mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            A = A & value;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A & mem[value];
-            advanceNClockCycles(4);
-            break;
-        // Indirect, Y
-        case 4:
-            // and ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then AND the contents of the resulting
-            // address with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address];
-            high_byte = mem[zp_address+1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A & mem[value+Y];
-            advanceNClockCycles(5);
-            break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            A = A & mem[(u8)value + X];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A & mem[value + Y];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A & mem[value + X];
-            advanceNClockCycles(4);
-            break;           
-    }
+    u8* value = fetch();
+    A = A & *value;
+
     PC++;
     // Set Status flags
     if (A == 0) {
@@ -585,59 +464,9 @@ void CPU::AND (u8 mode) {
 }
 
 void CPU::asl (u8 mode) {
-    u8 previous;
-    u8 current;
-    u16 value;
-    u16 high_byte;
-    u16 low_byte;
-    u8 zp_address;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            zp_address = mem[++PC];
-            previous = mem[zp_address];
-            mem[zp_address] = mem[zp_address] << 1;
-            current = mem[zp_address];
-            advanceNClockCycles(5);
-            break;
-        // Accumulator
-        case 1:
-            previous = A;
-            A = A << 1;
-            current = A;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            previous = mem[value];
-            mem[value] = mem[value] << 1;
-            current = mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page, X
-        case 3:
-            zp_address = mem[++PC];
-            previous = mem[zp_address + X];
-            mem[zp_address + X] = mem[zp_address + X] << 1;
-            current = mem[zp_address + X];
-            advanceNClockCycles(6);
-            break;
-        // Absolute, X
-        case 4:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            previous = mem[value + X];
-            mem[value + X] = mem[value + X] << 1;
-            current = mem[value + X];
-            advanceNClockCycles(7);
-            break;
-    }
+    u8* value = fetch();
+    u8 previous = *value;
+    *value = *value << 1;
 
     PC++;
 
@@ -647,11 +476,11 @@ void CPU::asl (u8 mode) {
     else
         C = 0;
 
-    if (current == 0) {
+    if (*value == 0) {
         Z = 1;
         N = 0;
     }
-    else if (current >= 128) {
+    else if (*value >= 128) {
         Z = 0;
         N = 1;
     }
@@ -701,103 +530,27 @@ void CPU::beq (u8 mode) {
 }
 
 void CPU::cmp (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
-    u8 result;
-    switch (mode) {
-        // Indirect, X: 
-        case 0:
-            // cmp ($70,X)
-            // compare the contents of the address stored at $70+X and $70+1+X with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address + X];
-            high_byte = mem[zp_address + X + 1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            result = mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            result = value;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value];
-            advanceNClockCycles(4);
-            break;
-        // Indirect, Y
-        case 4:
-            // cmp ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then compare the contents of the resulting
-            // address with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address];
-            high_byte = mem[zp_address+1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value+Y];
-            advanceNClockCycles(5);
-            break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            result = mem[(u8)value + X];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value + Y];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value + X];
-            advanceNClockCycles(4);
-            break;           
-    }
+    u8* result = fetch();
+
     PC++;
     // Set flags
-    if (A < result) {
+    if (A < *result) {
         Z = 0;
         C = 0;
-        if (result >= 128)
+        if (*result >= 128)
             N = 1;
         else
             N = 0;
     }
-    else if (A == result) {
+    else if (A == *result) {
         N = 0;
         Z = 1;
         C = 1;
     }
-    else if (A > result) {
+    else if (A > *result) {
         Z = 0;
         C = 1;
-        if (result >= 128)
+        if (*result >= 128)
             N = 1;
         else
             N = 0;
@@ -805,38 +558,18 @@ void CPU::cmp (u8 mode) {
 }
 
 void CPU::bit (u8 mode) {
-    u16 low_byte;
-    u16 high_byte;
-    u16 address;
-    u8 result;
-    u8 value;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            address = mem[++PC];
-            value = mem[address];
-            result = A & value;
-            advanceNClockCycles(3);
-            break;
-        // Absolute
-        case 1:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            address = high_byte | low_byte;
-            value = mem[address];
-            result = A & value;
-            advanceNClockCycles(4);
-            break;
-    }
+    u8* value = fetch();
+    u8 result = *value & A;
 
+    PC++;
+    
     if (result == 0)
         Z = 1;
     else
         Z = 0;
 
     // Bit shift 6 places so only last 2 bits are left
-    u8 nv_values = value >> 6;
+    u8 nv_values = *value >> 6;
     if (nv_values == 0) {
         N = 0;
         V = 0;
@@ -959,66 +692,45 @@ void CPU::bvs (u8 mode) {
 void CPU::clc (u8 mode) {
     // Only one mode
     C = 0;
+    PC++;
     advanceNClockCycles(2);
 }
 
 void CPU::cli (u8 mode) {
     // Only one mode
     I = 0;
+    PC++;
     advanceNClockCycles(2);
 }
 
 void CPU::clv (u8 mode) {
     V = 0;
+    PC++;
     advanceNClockCycles(2);
 }
 
 void CPU::cpx (u8 mode) {
-    u16 low_byte;
-    u16 high_byte;
-    u16 value;
-    u8 result;
-    switch (mode) {
-        // Immediate
-        case 0:
-            result = mem[++PC];
-            advanceNClockCycles(2);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            result = mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value];
-            advanceNClockCycles(4);
-            break;
-    }
+    u8* result = fetch();
+
     PC++;
     // Set flags
-    if (X < result) {
+    if (X < *result) {
         Z = 0;
         C = 0;
-        if (result >= 128)
+        if (*result >= 128)
             N = 1;
         else
             N = 0;
     }
-    else if (X == result) {
+    else if (X == *result) {
         N = 0;
         Z = 1;
         C = 1;
     }
-    else if (X > result) {
+    else if (X > *result) {
         Z = 0;
         C = 1;
-        if (result >= 128)
+        if (*result >= 128)
             N = 1;
         else
             N = 0;
@@ -1026,51 +738,27 @@ void CPU::cpx (u8 mode) {
 }
 
 void CPU::cpy (u8 mode) {
-    u16 low_byte;
-    u16 high_byte;
-    u16 value;
-    u8 result;
-    switch (mode) {
-        // Immediate
-        case 0:
-            result = mem[++PC];
-            advanceNClockCycles(2);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            result = mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = mem[value];
-            advanceNClockCycles(4);
-            break;
-    }
+    u8* result = fetch();
+
     PC++;
     // Set flags
-    if (Y < result) {
+    if (Y < *result) {
         Z = 0;
         C = 0;
-        if (result >= 128)
+        if (*result >= 128)
             N = 1;
         else
             N = 0;
     }
-    else if (Y == result) {
+    else if (Y == *result) {
         N = 0;
         Z = 1;
         C = 1;
     }
-    else if (Y > result) {
+    else if (Y > *result) {
         Z = 0;
         C = 1;
-        if (result >= 128)
+        if (*result >= 128)
             N = 1;
         else
             N = 0;
@@ -1078,51 +766,16 @@ void CPU::cpy (u8 mode) {
 }
 
 void CPU::dec (u8 mode) {
-    u16 low_byte;
-    u16 high_byte;
-    u16 value;
-    u8 zp_address;
-    u8 result;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            zp_address = mem[++PC];
-            result = --mem[zp_address];
-            advanceNClockCycles(5);
-            break;
-        // Absolute
-        case 1:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = --mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page, X
-        case 2:
-            zp_address = mem[++PC];
-            result = --mem[zp_address + X];
-            advanceNClockCycles(6);
-            break;
-        // Absolute, X
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = --mem[value + X];
-            advanceNClockCycles(7);
-            break;
-    }
+    u8* result = fetch();
+    *result = (*result)--;
 
     PC++;
 
-    if (result == 0) {
+    if (*result == 0) {
         Z = 1;
         N = 0;
     }
-    else if (result >= 128) {
+    else if (*result >= 128) {
         N = 1;
         Z = 0;
     }
@@ -1173,83 +826,9 @@ void CPU::dey (u8 mode) {
 }
 
 void CPU::eor (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
-    switch (mode) {
-        // Indirect, X: 
-        case 0:
-            // eor ($70,X)
-            // XOR the contents of the address stored at $70+X and $70+1+X with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address + X];
-            high_byte = mem[zp_address + X + 1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A ^ mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            A = A ^ mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            A = A ^ value;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A ^ mem[value];
-            advanceNClockCycles(4);
-            break;
-        // Indirect, Y
-        case 4:
-            // eor ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then XOR the contents of the resulting
-            // address with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address];
-            high_byte = mem[zp_address+1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A ^ mem[value+Y];
-            advanceNClockCycles(5);
-            break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            A = A ^ mem[(u8)value + X];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A ^ mem[value + Y];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A ^ mem[value + X];
-            advanceNClockCycles(4);
-            break;           
-    }
+    u8* value = fetch();
+    A = A ^ *value;
+
     PC++;
     // Set Status flags
     if (A == 0) {
@@ -1268,51 +847,16 @@ void CPU::eor (u8 mode) {
 }
 
 void CPU::inc (u8 mode) {
-    u16 low_byte;
-    u16 high_byte;
-    u16 value;
-    u8 zp_address;
-    u8 result;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            zp_address = mem[++PC];
-            result = ++mem[zp_address];
-            advanceNClockCycles(5);
-            break;
-        // Absolute
-        case 1:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = ++mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page, X
-        case 2:
-            zp_address = mem[++PC];
-            result = ++mem[zp_address + X];
-            advanceNClockCycles(6);
-            break;
-        // Absolute, X
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            result = ++mem[value + X];
-            advanceNClockCycles(7);
-            break;
-    }
+    u8* result = fetch();
+    *result = (*result)++;
 
     PC++;
 
-    if (result == 0) {
+    if (*result == 0) {
         Z = 1;
         N = 0;
     }
-    else if (result >= 128) {
+    else if (*result >= 128) {
         N = 1;
         Z = 0;
     }
@@ -1411,48 +955,9 @@ void CPU::jsr (u8 mode) {
 }
 
 void CPU::ldx (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
-    switch (mode) {
-        // Immediate
-        case 0:
-            value = mem[++PC];
-            X = value;
-            advanceNClockCycles(2);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            X = mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            X = mem[value];
-            advanceNClockCycles(4);
-            break;
-        // Zero Page, Y
-        case 3:
-            value = mem[++PC];
-            X = mem[value + Y];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 4:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            X = mem[value + Y];
-            advanceNClockCycles(4);
-            break;         
-    }
+    u8* result = fetch();
+    X = *result;
+
     PC++;
     // Set Status flags
     if (X == 0) {
@@ -1471,48 +976,9 @@ void CPU::ldx (u8 mode) {
 }
 
 void CPU::ldy (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
-    switch (mode) {
-        // Immediate
-        case 0:
-            value = mem[++PC];
-            Y = value;
-            advanceNClockCycles(2);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            Y = mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            Y = mem[value];
-            advanceNClockCycles(4);
-            break;
-        // Zero Page, X
-        case 3:
-            value = mem[++PC];
-            Y = mem[value + X];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 4:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            Y = mem[value + X];
-            advanceNClockCycles(4);
-            break;         
-    }
+    u8* result = fetch();
+    Y = *result;
+
     PC++;
     // Set Status flags
     if (Y == 0) {
@@ -1533,65 +999,16 @@ void CPU::ldy (u8 mode) {
 void CPU::lsr (u8 mode) {
     // Least significant bit gets stored in Carry flag
     u8 lsb;
-    u8 current;
-    u16 value;
-    u16 high_byte;
-    u16 low_byte;
-    u8 zp_address;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            zp_address = mem[++PC];
-            lsb = mem[zp_address] & 1;
-            mem[zp_address] = mem[zp_address] >> 1;
-            current = mem[zp_address];
-            advanceNClockCycles(5);
-            break;
-        // Accumulator
-        case 1:
-            lsb = A & 1;
-            A = A >> 1;
-            current = A;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            lsb = mem[value] & 1;
-            mem[value] = mem[value] >> 1;
-            current = mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page, X
-        case 3:
-            zp_address = mem[++PC];
-            lsb = mem[zp_address + X] & 1;
-            mem[zp_address + X] = mem[zp_address + X] >> 1;
-            current = mem[zp_address + X];
-            advanceNClockCycles(6);
-            break;
-        // Absolute, X
-        case 4:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            lsb = mem[value + X] & 1;
-            mem[value + X] = mem[value + X] >> 1;
-            current = mem[value + X];
-            advanceNClockCycles(7);
-            break;
-    }
+    u8* result = fetch();
+    lsb = *result & 1;
+    *result = *result >> 1;
 
     PC++;
 
     // Set status flags
     C = lsb;
 
-    if (current == 0) {
+    if (*result == 0) {
         Z = 1;
     }
     else {
@@ -1607,83 +1024,9 @@ void CPU::nop (u8 mode) {
 }
 
 void CPU::OR (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
-    switch (mode) {
-        // Indirect, X: 
-        case 0:
-            // or ($70,X)
-            // OR the contents of the address stored at $70+X and $70+1+X with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address + X];
-            high_byte = mem[zp_address + X + 1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A | mem[value];
-            advanceNClockCycles(6);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            A = A | mem[value];
-            advanceNClockCycles(3);
-            break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            A = A | value;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A | mem[value];
-            advanceNClockCycles(4);
-            break;
-        // Indirect, Y
-        case 4:
-            // or ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then OR the contents of the resulting
-            // address with A
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address];
-            high_byte = mem[zp_address+1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A | mem[value+Y];
-            advanceNClockCycles(5);
-            break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            A = A | mem[(u8)value + X];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A | mem[value + Y];
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A | mem[value + X];
-            advanceNClockCycles(4);
-            break;           
-    }
+    u8* result = fetch();
+    A = A | *result;
+    
     PC++;
     // Set Status flags
     if (A == 0) {
@@ -1774,50 +1117,7 @@ void CPU::plp (u8 mode) {
 }
 
 void CPU::rol (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 abs_address;
-    u8* value;
-    u8 zp_address;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            zp_address = mem[++PC];
-            value = &(mem[zp_address]);
-            advanceNClockCycles(5);
-            break;
-        // Accumulator
-        case 1:
-            value = &A;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            abs_address = high_byte | low_byte;
-
-            value = &(mem[abs_address]);
-            advanceNClockCycles(6);
-            break;
-        // Zero Page, X
-        case 3:
-            zp_address = mem[++PC];
-            value = &(mem[zp_address + X]);
-            advanceNClockCycles(6);
-            break;
-        // Absolute, X
-        case 4:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            abs_address = high_byte | low_byte;
-            
-            value = &(mem[abs_address + X]);
-            advanceNClockCycles(7);
-            break;
-    }
+    u8* value = fetch();
 
     PC++;
 
@@ -1842,50 +1142,7 @@ void CPU::rol (u8 mode) {
 }
 
 void CPU::ror (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 abs_address;
-    u8* value;
-    u8 zp_address;
-    switch (mode) {
-        // Zero Page
-        case 0:
-            zp_address = mem[++PC];
-            value = &(mem[zp_address]);
-            advanceNClockCycles(5);
-            break;
-        // Accumulator
-        case 1:
-            value = &A;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 2:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            abs_address = high_byte | low_byte;
-
-            value = &(mem[abs_address]);
-            advanceNClockCycles(6);
-            break;
-        // Zero Page, X
-        case 3:
-            zp_address = mem[++PC];
-            value = &(mem[zp_address + X]);
-            advanceNClockCycles(6);
-            break;
-        // Absolute, X
-        case 4:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            abs_address = high_byte | low_byte;
-            
-            value = &(mem[abs_address + X]);
-            advanceNClockCycles(7);
-            break;
-    }
+    u8* value = fetch();
 
     PC++;
 
@@ -1952,87 +1209,16 @@ void CPU::rts (u8 mode) {
 }
 
 void CPU::sbc (u8 mode) {
-    u16 high_byte;
-    u16 low_byte;
-    u16 value;
-    u8 zp_address;
+    u8* result = fetch()
     int previous_A = A;
     // C is inverted for this instruction
     C = 1 - C;
-    switch (mode) {
-        // Indirect, X
-        case 0:
-            // sbc ($70,X)
-            // Subtract the contents of the address stored at $70+X and $70+1+X from A and C
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address + X];
-            high_byte = mem[zp_address + X + 1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A - mem[value] - C;
-            advanceNClockCycles(6);
-            break;
-        // Zero Page
-        case 1:
-            value = mem[++PC];
-            A = A - mem[value] - C;
-            advanceNClockCycles(3);
-            break;
-        // Immediate
-        case 2:
-            value = mem[++PC];
-            A = A - value - C;
-            advanceNClockCycles(2);
-            break;
-        // Absolute
-        case 3:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A - mem[value] - C;
-            advanceNClockCycles(4);
-            break;
-        // Indirect, Y
-        case 4:
-            // sbc ($70),Y
-            // Add Y to the address stored at $70 and $70+1, then subtract the contents of the resulting
-            // address from A and C
-            zp_address = mem[++PC];
-            low_byte = mem[zp_address];
-            high_byte = mem[zp_address+1];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A - mem[value+Y] - C;
-            advanceNClockCycles(5);
-            break;
-        // Zero Page, X
-        case 5:
-            value = mem[++PC];
-            // Cast value to a u8 so values will wrap around to beginning of Zero Page
-            A = A - mem[(u8)value + X] - C;
-            advanceNClockCycles(4);
-            break;
-        // Absolute, Y
-        case 6:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A - mem[value + Y] - C;
-            advanceNClockCycles(4);
-            break;
-        // Absolute, X
-        case 7:
-            low_byte = mem[++PC];
-            high_byte = mem[++PC];
-            high_byte = high_byte << 8;
-            value = high_byte | low_byte;
-            A = A - mem[value + X] - C;
-            advanceNClockCycles(4);
-            break;
-    }
+    A = A - *result - C;
+
     PC++;
+    
+    // CPU XORs carry with highest bit of result and stores result in overflow flag 
+
     if (A == 0) {
         Z = 1;
         N = 0;
@@ -2047,16 +1233,16 @@ void CPU::sbc (u8 mode) {
         N = 0;
     }
 
-    int int_result = previous_A - value - C;
+    
+    u16 v = ((u16)value) ^ 0x00FF;
+    u16 temp = (u16)A + v + (u16)(1-C);
 
-    // Set C if result is not negative
-    if (int_result > 0)
+    if (temp & 0xFF00)
         C = 1;
     else
         C = 0;
 
-    // Check if outside signed range
-    if (int_result < -128 || int_result > 127)
+    if ((temp ^ (u16)A) & (temp ^ v) & 0x0080)
         V = 1;
     else
         V = 0;

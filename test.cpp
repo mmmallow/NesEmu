@@ -54,20 +54,28 @@ int main(int argc, char* argv[]) {
     uint8_t d = t;
     std::cout << (int)d << std::endl;*/
 
-    /*int t[10] = {0};
-    t[3] = 5;
+    int t[10] = {0};
+    t[3] = 0b11000000;
     int* p = &(t[3]);
+    *p = *p >> 6;
 
-    std::cout << *p << std::endl;*/
+    std::cout << *p << std::endl;
+    std::cout << t[3] << std::endl;
 
-    uint16_t value = 0x1;
-    uint8_t A = 0xFF;
+/*
+    uint8_t value = 0x3;
+    uint8_t twos_comp = -(unsigned int)value;
+    uint8_t A = 0x2;
     uint8_t C = 0;
 
-    uint8_t diff = A - value - C;
+    uint16_t diff = A + twos_comp;
+    uint8_t diff_u8 = diff;
 
-    std::cout << ((int)(diff) >= 128) << std::endl;
+    std::cout << ((int)(diff) >= 256) << std::endl;
     std::cout << (int)diff << std::endl;
+    std::cout << (int)diff_u8 << std::endl;
+    std::cout << (int)twos_comp << std::endl;
+*/
 
     return 0;
 }

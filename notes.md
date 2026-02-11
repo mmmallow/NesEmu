@@ -81,6 +81,9 @@
     to wait before running the next instruction
   * This should also allow for control over checking for interrupts and synchronization with the PPU.
 
+* Need to refactor address fetching. Create an enumeration that represents addressing mode. Create a method
+  that fetches and returns the address based on the addressing mode.
+
 ## Instruction Notes
 
 ### LDA
