@@ -6,22 +6,13 @@ void driver(CPU& c, int cycles) {
     while (c.cycle < cycles) {
         u8 instruction = c.mem[c.PC];
         auto instruct = c.instructions[instruction];
-        auto command = instruct.Fp;
-        (c.*command)(instruct.op_code);
+        auto command = instruct.instruction;
+        (c.*command)(instruct.mode);
     }
 }
 
 class ldaTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -38,7 +29,7 @@ public:
         // Store 27 at 0x4532
         c.mem[0x4532] = 27;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.A == 27);
         std::cout << "IndirectX: Passed" << std::endl;
@@ -53,7 +44,7 @@ public:
 
         c.mem[0x30] = 10;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.A == 10);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -66,7 +57,7 @@ public:
         c.mem[1] = 0xA9;
         c.mem[2] = 0x10;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 0x10);
         std::cout << "Immediate: Passed" << std::endl;
@@ -82,7 +73,7 @@ public:
 
         c.mem[0x2A30] = 15;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 15);
         std::cout << "Absolute: Passed" << std::endl;
@@ -101,7 +92,7 @@ public:
 
         c.mem[0x34D8] = 23;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.A == 23);
         std::cout << "IndirectY: Passed" << std::endl;
@@ -117,7 +108,7 @@ public:
 
         c.mem[0x2A] = 4;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 4);
         std::cout << "ZeroPageX: Passed" << std::endl;
     }
@@ -133,7 +124,7 @@ public:
 
         c.mem[0x2C3F] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 10);
         std::cout << "AbsoluteY: Passed" << std::endl;
     }
@@ -149,7 +140,7 @@ public:
 
         c.mem[0x2C3F] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 10);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -157,14 +148,6 @@ public:
 
 class adcTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -180,7 +163,7 @@ public:
 
         c.mem[0x4023] = 15;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.A == 25);
         std::cout << "IndirectX: Passed" << std::endl;
@@ -196,7 +179,7 @@ public:
 
         c.mem[0x30] = 10;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.A == 30);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -210,7 +193,7 @@ public:
         c.mem[1] = 0x69;
         c.mem[2] = 0x10;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 0x11);
         std::cout << "Immediate: Passed" << std::endl;
@@ -227,7 +210,7 @@ public:
 
         c.mem[0x2A30] = 15;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 30);
         std::cout << "Absolute: Passed" << std::endl;
@@ -247,7 +230,7 @@ public:
 
         c.mem[0x34D8] = 23;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.A == 30);
         std::cout << "IndirectY: Passed" << std::endl;
@@ -264,7 +247,7 @@ public:
 
         c.mem[0x2A] = 4;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 9);
         std::cout << "ZeroPageX: Passed" << std::endl;
     }
@@ -281,7 +264,7 @@ public:
 
         c.mem[0x2C3F] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 15);
         std::cout << "AbsoluteY: Passed" << std::endl;
     }
@@ -298,7 +281,7 @@ public:
 
         c.mem[0x2C3F] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 15);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -306,14 +289,6 @@ public:
 
 class andTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -329,7 +304,7 @@ public:
 
         c.mem[0x4023] = 0b00001111;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.A == 0);
         std::cout << "IndirectX: Passed" << std::endl;
@@ -345,7 +320,7 @@ public:
 
         c.mem[0x30] = 0b00001111;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.A == 0);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -359,7 +334,7 @@ public:
         c.mem[1] = 0x29;
         c.mem[2] = 0b11110000;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 0);
         std::cout << "Immediate: Passed" << std::endl;
@@ -376,7 +351,7 @@ public:
 
         c.mem[0x2A30] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 0);
         std::cout << "Absolute: Passed" << std::endl;
@@ -396,7 +371,7 @@ public:
 
         c.mem[0x34D8] = 0b00001111;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.A == 0);
         std::cout << "IndirectY: Passed" << std::endl;
@@ -413,7 +388,7 @@ public:
 
         c.mem[0x2A] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 0);
         std::cout << "ZeroPageX: Passed" << std::endl;
     }
@@ -430,7 +405,7 @@ public:
 
         c.mem[0x2C3F] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 0);
         std::cout << "AbsoluteY: Passed" << std::endl;
     }
@@ -447,7 +422,7 @@ public:
 
         c.mem[0x2C3F] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 0);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -455,14 +430,6 @@ public:
 
 class aslTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void ZeroPage() {
         CPU c(1, 0);
@@ -473,7 +440,7 @@ public:
 
         c.mem[0x30] = 0b00000001;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.mem[0x30] == 2);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -486,7 +453,7 @@ public:
         c.A = 0b00000001;
         c.mem[1] = 0x0A;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 2);
         std::cout << "Accumulator: Passed" << std::endl;
@@ -502,7 +469,7 @@ public:
 
         c.mem[0x2A30] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A30] == 2);
         std::cout << "Absolute: Passed" << std::endl;
@@ -518,7 +485,7 @@ public:
 
         c.mem[0x2A] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A] == 2);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -535,7 +502,7 @@ public:
 
         c.mem[0x2C3F] = 0b00000001;
 
-        not_used(c, 7);
+        driver(c, 7);
         assert(c.mem[0x2C3F] == 2);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -543,15 +510,6 @@ public:
 
 class branchTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void BCC() {
         CPU c (10, 0);
@@ -566,7 +524,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BCC: passed" << std::endl;
@@ -586,7 +544,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BCS: passed" << std::endl;
@@ -603,7 +561,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BEQ: passed" << std::endl;
@@ -620,7 +578,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BMI: passed" << std::endl;
@@ -637,7 +595,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BNE: passed" << std::endl;
@@ -654,7 +612,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BPL: passed" << std::endl;
@@ -671,7 +629,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BVC: passed" << std::endl;
@@ -688,7 +646,7 @@ public:
         c.mem[5] = 0xA9;
         c.mem[6] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 5);
         std::cout << "BVS: passed" << std::endl;
@@ -723,12 +681,7 @@ public:
         c.mem[0x30] = 0xA9;
         c.mem[0x31] = 50;
 
-        while (c.cycle < 10) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
+        driver(c, 10);
 
         std::cout << "Accumulator == " << (int)c.A << std::endl;
     }
@@ -736,14 +689,6 @@ public:
 
 class cmpTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -759,7 +704,7 @@ public:
 
         c.mem[0x4023] = 10;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         // Less than, C = 0, Z = 0, N = 0
         assert(c.C == 0 && c.Z == 0 && c.N == 0);
@@ -776,7 +721,7 @@ public:
 
         c.mem[0x30] = 5;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -791,7 +736,7 @@ public:
         c.mem[1] = 0xc9;
         c.mem[2] = 10;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         // Equal, C == 1, Z = 1, N = 0
         assert(c.C == 1 && c.Z == 1 && c.N == 0);
@@ -809,7 +754,7 @@ public:
 
         c.mem[0x2A30] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -830,7 +775,7 @@ public:
 
         c.mem[0x34D8] = 5;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -848,7 +793,7 @@ public:
 
         c.mem[0x2A] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -867,7 +812,7 @@ public:
 
         c.mem[0x2C3F] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -886,7 +831,7 @@ public:
 
         c.mem[0x2C3F] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -897,15 +842,6 @@ public:
 class bitTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void ZeroPage() {
         CPU c(1, 0);
         
@@ -915,7 +851,7 @@ public:
 
         c.mem[0x30] = 0b00001111;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.Z == 1);
         assert(c.N == 0);
@@ -933,7 +869,7 @@ public:
 
         c.mem[0x4C30] = 0b11101100;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.Z == 0);
         assert(c.N == 1);
@@ -945,15 +881,6 @@ public:
 
 class brkTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void Implied() {
         CPU c(1, 0);
@@ -977,7 +904,7 @@ public:
         c.mem[0xA323] = 0xA9;
         c.mem[0xA324] = 10;
 
-        not_used(c, 11);
+        driver(c, 11);
 
         assert(c.A == 10);
         assert(c.mem[(0x0100 | c.S) + 1] == 0b01110101);
@@ -990,15 +917,6 @@ public:
 class cpxTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void ZeroPage() {
         CPU c(1, 0);
 
@@ -1009,7 +927,7 @@ public:
 
         c.mem[0x30] = 5;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -1024,7 +942,7 @@ public:
         c.mem[1] = 0xE0;
         c.mem[2] = 10;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         // Equal, C == 1, Z = 1, N = 0
         assert(c.C == 1 && c.Z == 1 && c.N == 0);
@@ -1042,7 +960,7 @@ public:
 
         c.mem[0x2A30] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -1052,15 +970,6 @@ public:
 
 class cpyTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void ZeroPage() {
         CPU c(1, 0);
@@ -1072,7 +981,7 @@ public:
 
         c.mem[0x30] = 5;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -1087,7 +996,7 @@ public:
         c.mem[1] = 0xC0;
         c.mem[2] = 10;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         // Equal, C == 1, Z = 1, N = 0
         assert(c.C == 1 && c.Z == 1 && c.N == 0);
@@ -1105,7 +1014,7 @@ public:
 
         c.mem[0x2A30] = 5;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         // Greater than, C = 1, Z = 0, N = 0
         assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -1116,15 +1025,6 @@ public:
 class decTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void ZeroPage() {
         CPU c(1, 0);
 
@@ -1134,7 +1034,7 @@ public:
         
         c.mem[0x30] = 10;
 
-        not_used(c, 5);
+        driver(c, 5);
         
         assert(c.mem[0x30] == 9);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1150,7 +1050,7 @@ public:
 
         c.mem[0x3020] = 10;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x3020] == 9);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1166,7 +1066,7 @@ public:
 
         c.mem[0x32] = 10;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x32] == 9);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1183,7 +1083,7 @@ public:
 
         c.mem[0x3025] = 10;
 
-        not_used(c, 7);
+        driver(c, 7);
 
         assert(c.mem[0x3025] == 9);
         std::cout << "AbsoluteX: Passed" << std::endl;
@@ -1193,15 +1093,6 @@ public:
 class deXYTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void Dex() {
         CPU c(1, 0);
 
@@ -1209,7 +1100,7 @@ public:
         c.X = 10;
         c.mem[1] = 0xCA;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.X == 9);
         std::cout << "DEX: Passed" << std::endl;
@@ -1222,7 +1113,7 @@ public:
         c.Y = 10;
         c.mem[1] = 0x88;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.Y == 9);
         std::cout << "DEY: Passed" << std::endl;
@@ -1231,14 +1122,6 @@ public:
 
 class eorTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -1254,7 +1137,7 @@ public:
 
         c.mem[0x4023] = 0b00001111;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.A == 255);
         std::cout << "IndirectX: Passed" << std::endl;
@@ -1270,7 +1153,7 @@ public:
 
         c.mem[0x30] = 0b00001111;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.A == 255);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1284,7 +1167,7 @@ public:
         c.mem[1] = 0x49;
         c.mem[2] = 0b11110000;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 255);
         std::cout << "Immediate: Passed" << std::endl;
@@ -1301,7 +1184,7 @@ public:
 
         c.mem[0x2A30] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 255);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1321,7 +1204,7 @@ public:
 
         c.mem[0x34D8] = 0b00001111;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.A == 255);
         std::cout << "IndirectY: Passed" << std::endl;
@@ -1338,7 +1221,7 @@ public:
 
         c.mem[0x2A] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 255);
         std::cout << "ZeroPageX: Passed" << std::endl;
     }
@@ -1355,7 +1238,7 @@ public:
 
         c.mem[0x2C3F] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 255);
         std::cout << "AbsoluteY: Passed" << std::endl;
     }
@@ -1372,7 +1255,7 @@ public:
 
         c.mem[0x2C3F] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 255);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -1380,15 +1263,6 @@ public:
 
 class incTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void ZeroPage() {
         CPU c(1, 0);
@@ -1399,7 +1273,7 @@ public:
         
         c.mem[0x30] = 10;
 
-        not_used(c, 5);
+        driver(c, 5);
         
         assert(c.mem[0x30] == 11);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1415,7 +1289,7 @@ public:
 
         c.mem[0x3020] = 10;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x3020] == 11);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1431,7 +1305,7 @@ public:
 
         c.mem[0x32] = 10;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x32] == 11);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1448,7 +1322,7 @@ public:
 
         c.mem[0x3025] = 10;
 
-        not_used(c, 7);
+        driver(c, 7);
 
         assert(c.mem[0x3025] == 11);
         std::cout << "AbsoluteX: Passed" << std::endl;
@@ -1458,15 +1332,6 @@ public:
 class inXYTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void Inx() {
         CPU c(1, 0);
 
@@ -1474,7 +1339,7 @@ public:
         c.X = 10;
         c.mem[1] = 0xE8;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.X == 11);
         std::cout << "INX: Passed" << std::endl;
@@ -1487,7 +1352,7 @@ public:
         c.Y = 10;
         c.mem[1] = 0xC8;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.Y == 11);
         std::cout << "INY: Passed" << std::endl;
@@ -1497,15 +1362,6 @@ public:
 class jmpTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void Absolute() {
         CPU c(1, 0);
 
@@ -1513,7 +1369,7 @@ public:
         c.mem[2] = 0x33;
         c.mem[3] = 0xD4;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.PC == 0xD433);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1529,7 +1385,7 @@ public:
         c.mem[0x2E45] = 0xD6;
         c.mem[0x2E46] = 0x36;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.PC == 0x36D6);
         std::cout << "Indirect: Passed" << std::endl;
@@ -1539,22 +1395,13 @@ public:
 class ldxTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void Immediate() {
         CPU c(1, 0);
 
         c.mem[1] = 0xA2;
         c.mem[2] = 0x20;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.X == 0x20);
         std::cout << "Immediate: Passed" << std::endl;
@@ -1567,7 +1414,7 @@ public:
         c.mem[2] = 0x3A;
         c.mem[0x3A] = 23;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.X == 23);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1582,7 +1429,7 @@ public:
 
         c.mem[0x5332] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.X == 10);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1597,7 +1444,7 @@ public:
         
         c.mem[0x25] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.X == 10);
         std::cout << "ZeroPageY: Passed" << std::endl;
@@ -1613,7 +1460,7 @@ public:
 
         c.mem[0x5A35] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.X == 10);
         std::cout << "AbsoluteY: Passed" << std::endl;
@@ -1623,22 +1470,13 @@ public:
 class ldyTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void Immediate() {
         CPU c(1, 0);
 
         c.mem[1] = 0xA0;
         c.mem[2] = 0x20;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.Y == 0x20);
         std::cout << "Immediate: Passed" << std::endl;
@@ -1651,7 +1489,7 @@ public:
         c.mem[2] = 0x3A;
         c.mem[0x3A] = 23;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.Y == 23);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1666,7 +1504,7 @@ public:
 
         c.mem[0x5332] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.Y == 10);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1681,7 +1519,7 @@ public:
         
         c.mem[0x25] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.Y == 10);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1697,7 +1535,7 @@ public:
 
         c.mem[0x5A35] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
         
         assert(c.Y == 10);
         std::cout << "AbsoluteX: Passed" << std::endl;
@@ -1706,14 +1544,6 @@ public:
 
 class lsrTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void ZeroPage() {
         CPU c(1, 0);
@@ -1724,7 +1554,7 @@ public:
 
         c.mem[0x30] = 0b00000001;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.mem[0x30] == 0);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1737,7 +1567,7 @@ public:
         c.A = 0b00001010;
         c.mem[1] = 0x4A;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 5);
         std::cout << "Accumulator: Passed" << std::endl;
@@ -1753,7 +1583,7 @@ public:
 
         c.mem[0x2A30] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A30] == 0);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1769,7 +1599,7 @@ public:
 
         c.mem[0x2A] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A] == 0);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1786,7 +1616,7 @@ public:
 
         c.mem[0x2C3F] = 0b00000001;
 
-        not_used(c, 7);
+        driver(c, 7);
         assert(c.mem[0x2C3F] == 0);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -1794,14 +1624,6 @@ public:
 
 class orTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -1817,7 +1639,7 @@ public:
 
         c.mem[0x4023] = 0b00001111;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.A == 255);
         std::cout << "IndirectX: Passed" << std::endl;
@@ -1833,7 +1655,7 @@ public:
 
         c.mem[0x30] = 0b00001111;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.A == 255);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -1847,7 +1669,7 @@ public:
         c.mem[1] = 0x09;
         c.mem[2] = 0b11110000;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 255);
         std::cout << "Immediate: Passed" << std::endl;
@@ -1864,7 +1686,7 @@ public:
 
         c.mem[0x2A30] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 255);
         std::cout << "Absolute: Passed" << std::endl;
@@ -1884,7 +1706,7 @@ public:
 
         c.mem[0x34D8] = 0b00001111;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.A == 255);
         std::cout << "IndirectY: Passed" << std::endl;
@@ -1901,7 +1723,7 @@ public:
 
         c.mem[0x2A] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 255);
         std::cout << "ZeroPageX: Passed" << std::endl;
     }
@@ -1918,7 +1740,7 @@ public:
 
         c.mem[0x2C3F] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 255);
         std::cout << "AbsoluteY: Passed" << std::endl;
     }
@@ -1935,7 +1757,7 @@ public:
 
         c.mem[0x2C3F] = 0b00001111;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 255);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -1944,22 +1766,13 @@ public:
 class pushPullTest {
 public:
 
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
-
     void pha() {
         CPU c(1, 0);
 
         c.A = 20;
         c.mem[1] = 0x48;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.mem[0x0100 | c.S + 1] == 20);
         std::cout << "pha: Passed" << std::endl;
@@ -1977,7 +1790,7 @@ public:
 
         c.mem[1] = 0x08;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.mem[0x0100 | c.S + 1] == 0b10110101);
         std::cout << "php: Passed" << std::endl;
@@ -1989,7 +1802,7 @@ public:
         c.pushStack(30);
         c.mem[1] = 0x68;
 
-        not_used(c, 4);
+        driver(c, 4);
         
         assert(c.A == 30);
         std::cout << "pla: Passed" << std::endl;
@@ -2001,7 +1814,7 @@ public:
         c.pushStack(0b11110000);
         c.mem[1] = 0x28;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.N == 1 && c.V == 1 && c.B == 1 && c.I == 0 && c.Z == 0 && c.C == 0);
         std::cout << "plp: Passed" << std::endl;
@@ -2010,15 +1823,6 @@ public:
 
 class rolTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void ZeroPage() {
         CPU c(1, 0);
@@ -2030,7 +1834,7 @@ public:
 
         c.mem[0x30] = 0b00000001;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.mem[0x30] == 3 && c.C == 0);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -2044,7 +1848,7 @@ public:
         c.A = 0b00000101;
         c.mem[1] = 0x2A;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 11 && c.C == 0);
         std::cout << "Accumulator: Passed" << std::endl;
@@ -2061,7 +1865,7 @@ public:
 
         c.mem[0x2A30] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A30] == 3 && c.C == 0);
         std::cout << "Absolute: Passed" << std::endl;
@@ -2078,7 +1882,7 @@ public:
 
         c.mem[0x2A] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A] == 3 && c.C == 0);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -2096,7 +1900,7 @@ public:
 
         c.mem[0x2C3F] = 0b00000001;
 
-        not_used(c, 7);
+        driver(c, 7);
         assert(c.mem[0x2C3F] == 3 && c.C == 0);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -2104,15 +1908,6 @@ public:
 
 class rorTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void ZeroPage() {
         CPU c(1, 0);
@@ -2124,7 +1919,7 @@ public:
 
         c.mem[0x30] = 0b00000001;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.mem[0x30] == 128 && c.C == 1);
         std::cout << "ZeroPage: Passed" << std::endl;
@@ -2138,7 +1933,7 @@ public:
         c.A = 0b00000001;
         c.mem[1] = 0x6A;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 128 && c.C == 1);
         std::cout << "Accumulator: Passed" << std::endl;
@@ -2155,7 +1950,7 @@ public:
 
         c.mem[0x2A30] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A30] == 128 && c.C == 1);
         std::cout << "Absolute: Passed" << std::endl;
@@ -2172,7 +1967,7 @@ public:
 
         c.mem[0x2A] = 0b00000001;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.mem[0x2A] == 128 && c.C == 1);
         std::cout << "ZeroPageX: Passed" << std::endl;
@@ -2190,7 +1985,7 @@ public:
 
         c.mem[0x2C3F] = 0b00000001;
 
-        not_used(c, 7);
+        driver(c, 7);
         assert(c.mem[0x2C3F] == 128 && c.C == 1);
         std::cout << "AbsoluteX: Passed" << std::endl;
     }
@@ -2198,15 +1993,6 @@ public:
 
 class returnTest {
 public:
-
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void rti() {
         CPU c(0x20, 0x4A);
@@ -2226,7 +2012,7 @@ public:
         c.mem[0x4A22] = 0x69;
         c.mem[0x4A23] = 1;
 
-        not_used(c, 16);
+        driver(c, 16);
 
         assert(c.A == 11);
         std::cout << "RTI: Passed" << std::endl;
@@ -2246,7 +2032,7 @@ public:
         // rts
         c.mem[0x6E3B] = 0x60;
 
-        not_used(c, 14);
+        driver(c, 14);
 
         assert(c.A == 10 && c.PC == 4);
         std::cout << "RTS: Passed" << std::endl;
@@ -2255,14 +2041,6 @@ public:
 
 class sbcTest {
 public:
-    void not_used(CPU& c, int cycles) {
-        while (c.cycle < cycles) {
-            u8 instruction = c.mem[c.PC];
-            auto instruct = c.instructions[instruction];
-            auto command = std::get<0>(instruct);
-            (c.*command)(std::get<1>(instruct));
-        }
-    }
 
     void IndirectX() {
         CPU c(1, 0);
@@ -2279,7 +2057,7 @@ public:
 
         c.mem[0x4023] = 1;
 
-        not_used(c, 6);
+        driver(c, 6);
 
         assert(c.A == 0x7E);
         assert(c.V == 1);
@@ -2298,7 +2076,7 @@ public:
 
         c.mem[0x30] = 3;
 
-        not_used(c, 3);
+        driver(c, 3);
 
         assert(c.A == 0xFF);
         assert(c.V == 0);
@@ -2315,7 +2093,7 @@ public:
         c.mem[1] = 0xE9;
         c.mem[2] = 0x1;
 
-        not_used(c, 2);
+        driver(c, 2);
 
         assert(c.A == 1);
         assert(c.V == 0);
@@ -2335,7 +2113,7 @@ public:
 
         c.mem[0x2A30] = 0xFF;
 
-        not_used(c, 4);
+        driver(c, 4);
 
         assert(c.A == 0x80);
         assert(c.V == 1);
@@ -2360,7 +2138,7 @@ public:
 
         c.mem[0x34D8] = 0xFF;
 
-        not_used(c, 5);
+        driver(c, 5);
 
         assert(c.A == 0x7F);
         assert(c.V == 0);
@@ -2381,7 +2159,7 @@ public:
 
         c.mem[0x2A] = 1;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 9);
         assert(c.V == 0);
         assert(c.C == 1);
@@ -2401,7 +2179,7 @@ public:
 
         c.mem[0x2C3F] = 1;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 8);
         assert(c.V == 0);
         assert(c.C == 1);
@@ -2421,7 +2199,7 @@ public:
 
         c.mem[0x2C3F] = 10;
 
-        not_used(c, 4);
+        driver(c, 4);
         assert(c.A == 0xFA);
         assert(c.V == 0);
         assert(c.C == 0);
