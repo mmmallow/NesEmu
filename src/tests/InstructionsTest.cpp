@@ -2,13 +2,26 @@
 #include <cassert>
 #include "InstructionsTest.h"
 
-void driver(CPU& c, int cycles) {
-   // while (c.cycle < cycles) {
+void driver(CPU& c, bool ignoreFirstBrk) {
+    bool skippedFirstBrk = false;
+
+    while (true) {
         u8 instruction = c.mem[c.PC];
+
+        // Stop if hit BRK
+        if (instruction == 0x00) {
+            if (ignoreFirstBrk && !skippedFirstBrk) {
+                skippedFirstBrk = true;
+                // We don't break here so the CPU actually executes the BRK
+            } else {
+                break;
+            }
+        }
+
         auto instruct = c.instructions[instruction];
         auto command = instruct.instruction;
         (c.*command)();
-    //}
+    }
 }
 
 // =========================
@@ -29,7 +42,7 @@ void ldaTest::IndirectX() {
     // Store 27 at 0x4532
     c.mem[0x4532] = 27;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.A == 27);
     std::cout << "IndirectX: Passed" << std::endl;
@@ -44,7 +57,7 @@ void ldaTest::ZeroPage() {
 
     c.mem[0x30] = 10;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.A == 10);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -57,7 +70,7 @@ void ldaTest::Immediate() {
     c.mem[1] = 0xA9;
     c.mem[2] = 0x10;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 0x10);
     std::cout << "Immediate: Passed" << std::endl;
@@ -73,7 +86,7 @@ void ldaTest::Absolute() {
 
     c.mem[0x2A30] = 15;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 15);
     std::cout << "Absolute: Passed" << std::endl;
@@ -92,7 +105,7 @@ void ldaTest::IndirectY() {
 
     c.mem[0x34D8] = 23;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.A == 23);
     std::cout << "IndirectY: Passed" << std::endl;
@@ -108,7 +121,7 @@ void ldaTest::ZeroPageX() {
 
     c.mem[0x2A] = 4;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 4);
     std::cout << "ZeroPageX: Passed" << std::endl;
 }
@@ -124,7 +137,7 @@ void ldaTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 10;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 10);
     std::cout << "AbsoluteY: Passed" << std::endl;
 }
@@ -140,7 +153,7 @@ void ldaTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 10;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 10);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -162,7 +175,7 @@ void adcTest::IndirectX() {
 
     c.mem[0x4023] = 15;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.A == 25);
     std::cout << "IndirectX: Passed" << std::endl;
@@ -178,7 +191,7 @@ void adcTest::ZeroPage() {
 
     c.mem[0x30] = 10;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.A == 30);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -192,7 +205,7 @@ void adcTest::Immediate() {
     c.mem[1] = 0x69;
     c.mem[2] = 0x10;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 0x11);
     std::cout << "Immediate: Passed" << std::endl;
@@ -209,7 +222,7 @@ void adcTest::Absolute() {
 
     c.mem[0x2A30] = 15;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 30);
     std::cout << "Absolute: Passed" << std::endl;
@@ -229,7 +242,7 @@ void adcTest::IndirectY() {
 
     c.mem[0x34D8] = 23;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.A == 30);
     std::cout << "IndirectY: Passed" << std::endl;
@@ -246,7 +259,7 @@ void adcTest::ZeroPageX() {
 
     c.mem[0x2A] = 4;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 9);
     std::cout << "ZeroPageX: Passed" << std::endl;
 }
@@ -263,7 +276,7 @@ void adcTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 10;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 15);
     std::cout << "AbsoluteY: Passed" << std::endl;
 }
@@ -280,7 +293,7 @@ void adcTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 10;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 15);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -302,7 +315,7 @@ void andTest::IndirectX() {
 
     c.mem[0x4023] = 0b00001111;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.A == 0);
     std::cout << "IndirectX: Passed" << std::endl;
@@ -318,7 +331,7 @@ void andTest::ZeroPage() {
 
     c.mem[0x30] = 0b00001111;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.A == 0);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -332,7 +345,7 @@ void andTest::Immediate() {
     c.mem[1] = 0x29;
     c.mem[2] = 0b11110000;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 0);
     std::cout << "Immediate: Passed" << std::endl;
@@ -349,7 +362,7 @@ void andTest::Absolute() {
 
     c.mem[0x2A30] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 0);
     std::cout << "Absolute: Passed" << std::endl;
@@ -369,7 +382,7 @@ void andTest::IndirectY() {
 
     c.mem[0x34D8] = 0b00001111;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.A == 0);
     std::cout << "IndirectY: Passed" << std::endl;
@@ -386,7 +399,7 @@ void andTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 0);
     std::cout << "ZeroPageX: Passed" << std::endl;
 }
@@ -403,7 +416,7 @@ void andTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 0);
     std::cout << "AbsoluteY: Passed" << std::endl;
 }
@@ -420,7 +433,7 @@ void andTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 0);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -437,7 +450,7 @@ void aslTest::ZeroPage() {
 
     c.mem[0x30] = 0b00000001;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.mem[0x30] == 2);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -450,7 +463,7 @@ void aslTest::Accumulator() {
     c.A = 0b00000001;
     c.mem[1] = 0x0A;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 2);
     std::cout << "Accumulator: Passed" << std::endl;
@@ -466,7 +479,7 @@ void aslTest::Absolute() {
 
     c.mem[0x2A30] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A30] == 2);
     std::cout << "Absolute: Passed" << std::endl;
@@ -482,7 +495,7 @@ void aslTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A] == 2);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -499,7 +512,7 @@ void aslTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00000001;
 
-    driver(c, 7);
+    driver(c, false);
     assert(c.mem[0x2C3F] == 2);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -520,7 +533,7 @@ void branchTest::BCC() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BCC: passed" << std::endl;
@@ -540,7 +553,7 @@ void branchTest::BCS() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BCS: passed" << std::endl;
@@ -557,7 +570,7 @@ void branchTest::BEQ() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BEQ: passed" << std::endl;
@@ -574,7 +587,7 @@ void branchTest::BMI() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BMI: passed" << std::endl;
@@ -591,7 +604,7 @@ void branchTest::BNE() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BNE: passed" << std::endl;
@@ -608,7 +621,7 @@ void branchTest::BPL() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BPL: passed" << std::endl;
@@ -625,7 +638,7 @@ void branchTest::BVC() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BVC: passed" << std::endl;
@@ -642,7 +655,7 @@ void branchTest::BVS() {
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "BVS: passed" << std::endl;
@@ -677,7 +690,7 @@ void branchTest::realProgram() {
     c.mem[0x30] = 0xA9;
     c.mem[0x31] = 50;
 
-    driver(c, 10);
+    driver(c, false);
 
     std::cout << "Accumulator == " << (int)c.A << std::endl;
 }
@@ -699,7 +712,7 @@ void cmpTest::IndirectX() {
 
     c.mem[0x4023] = 10;
 
-    driver(c, 6);
+    driver(c, false);
 
     // Less than, C = 0, Z = 0, N = 0
     assert(c.C == 0 && c.Z == 0 && c.N == 0);
@@ -716,7 +729,7 @@ void cmpTest::ZeroPage() {
 
     c.mem[0x30] = 5;
 
-    driver(c, 3);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -731,7 +744,7 @@ void cmpTest::Immediate() {
     c.mem[1] = 0xc9;
     c.mem[2] = 10;
 
-    driver(c, 2);
+    driver(c, false);
 
     // Equal, C == 1, Z = 1, N = 0
     assert(c.C == 1 && c.Z == 1 && c.N == 0);
@@ -749,7 +762,7 @@ void cmpTest::Absolute() {
 
     c.mem[0x2A30] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -770,7 +783,7 @@ void cmpTest::IndirectY() {
 
     c.mem[0x34D8] = 5;
 
-    driver(c, 5);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -788,7 +801,7 @@ void cmpTest::ZeroPageX() {
 
     c.mem[0x2A] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -807,7 +820,7 @@ void cmpTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -826,7 +839,7 @@ void cmpTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -845,7 +858,7 @@ void bitTest::ZeroPage() {
 
     c.mem[0x30] = 0b00001111;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.Z == 1);
     assert(c.N == 0);
@@ -863,7 +876,7 @@ void bitTest::Absolute() {
 
     c.mem[0x4C30] = 0b11101100;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.Z == 0);
     assert(c.N == 1);
@@ -896,7 +909,8 @@ void brkTest::Implied() {
     c.mem[0xA323] = 0xA9;
     c.mem[0xA324] = 10;
 
-    driver(c, 11);
+    // We pass true to let the driver execute our test's brk
+    driver(c, true);
 
     assert(c.A == 10);
     assert(c.mem[(0x0100 | c.S) + 1] == 0b01110101);
@@ -917,7 +931,7 @@ void cpxTest::ZeroPage() {
 
     c.mem[0x30] = 5;
 
-    driver(c, 3);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -932,7 +946,7 @@ void cpxTest::Immediate() {
     c.mem[1] = 0xE0;
     c.mem[2] = 10;
 
-    driver(c, 2);
+    driver(c, false);
 
     // Equal, C == 1, Z = 1, N = 0
     assert(c.C == 1 && c.Z == 1 && c.N == 0);
@@ -950,7 +964,7 @@ void cpxTest::Absolute() {
 
     c.mem[0x2A30] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -970,7 +984,7 @@ void cpyTest::ZeroPage() {
 
     c.mem[0x30] = 5;
 
-    driver(c, 3);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -985,7 +999,7 @@ void cpyTest::Immediate() {
     c.mem[1] = 0xC0;
     c.mem[2] = 10;
 
-    driver(c, 2);
+    driver(c, false);
 
     // Equal, C == 1, Z = 1, N = 0
     assert(c.C == 1 && c.Z == 1 && c.N == 0);
@@ -1003,7 +1017,7 @@ void cpyTest::Absolute() {
 
     c.mem[0x2A30] = 5;
 
-    driver(c, 4);
+    driver(c, false);
 
     // Greater than, C = 1, Z = 0, N = 0
     assert(c.C == 1 && c.Z == 0 && c.N == 0);
@@ -1022,7 +1036,7 @@ void decTest::ZeroPage() {
     
     c.mem[0x30] = 10;
 
-    driver(c, 5);
+    driver(c, false);
     
     assert(c.mem[0x30] == 9);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1038,7 +1052,7 @@ void decTest::Absolute() {
 
     c.mem[0x3020] = 10;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x3020] == 9);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1054,7 +1068,7 @@ void decTest::ZeroPageX() {
 
     c.mem[0x32] = 10;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x32] == 9);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1071,7 +1085,7 @@ void decTest::AbsoluteX() {
 
     c.mem[0x3025] = 10;
 
-    driver(c, 7);
+    driver(c, false);
 
     assert(c.mem[0x3025] == 9);
     std::cout << "AbsoluteX: Passed" << std::endl;
@@ -1087,7 +1101,7 @@ void deXYTest::Dex() {
     c.X = 10;
     c.mem[1] = 0xCA;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.X == 9);
     std::cout << "DEX: Passed" << std::endl;
@@ -1100,7 +1114,7 @@ void deXYTest::Dey() {
     c.Y = 10;
     c.mem[1] = 0x88;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.Y == 9);
     std::cout << "DEY: Passed" << std::endl;
@@ -1123,7 +1137,7 @@ void eorTest::IndirectX() {
 
     c.mem[0x4023] = 0b00001111;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "IndirectX: Passed" << std::endl;
@@ -1139,7 +1153,7 @@ void eorTest::ZeroPage() {
 
     c.mem[0x30] = 0b00001111;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1153,7 +1167,7 @@ void eorTest::Immediate() {
     c.mem[1] = 0x49;
     c.mem[2] = 0b11110000;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "Immediate: Passed" << std::endl;
@@ -1170,7 +1184,7 @@ void eorTest::Absolute() {
 
     c.mem[0x2A30] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1190,7 +1204,7 @@ void eorTest::IndirectY() {
 
     c.mem[0x34D8] = 0b00001111;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "IndirectY: Passed" << std::endl;
@@ -1207,7 +1221,7 @@ void eorTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 255);
     std::cout << "ZeroPageX: Passed" << std::endl;
 }
@@ -1224,7 +1238,7 @@ void eorTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 255);
     std::cout << "AbsoluteY: Passed" << std::endl;
 }
@@ -1241,7 +1255,7 @@ void eorTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 255);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -1258,7 +1272,7 @@ void incTest::ZeroPage() {
     
     c.mem[0x30] = 10;
 
-    driver(c, 5);
+    driver(c, false);
     
     assert(c.mem[0x30] == 11);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1274,7 +1288,7 @@ void incTest::Absolute() {
 
     c.mem[0x3020] = 10;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x3020] == 11);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1290,7 +1304,7 @@ void incTest::ZeroPageX() {
 
     c.mem[0x32] = 10;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x32] == 11);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1307,7 +1321,7 @@ void incTest::AbsoluteX() {
 
     c.mem[0x3025] = 10;
 
-    driver(c, 7);
+    driver(c, false);
 
     assert(c.mem[0x3025] == 11);
     std::cout << "AbsoluteX: Passed" << std::endl;
@@ -1323,7 +1337,7 @@ void inXYTest::Inx() {
     c.X = 10;
     c.mem[1] = 0xE8;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.X == 11);
     std::cout << "INX: Passed" << std::endl;
@@ -1336,7 +1350,7 @@ void inXYTest::Iny() {
     c.Y = 10;
     c.mem[1] = 0xC8;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.Y == 11);
     std::cout << "INY: Passed" << std::endl;
@@ -1352,7 +1366,7 @@ void jmpTest::Absolute() {
     c.mem[2] = 0x33;
     c.mem[3] = 0xD4;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.PC == 0xD433);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1368,7 +1382,7 @@ void jmpTest::Indirect() {
     c.mem[0x2E45] = 0xD6;
     c.mem[0x2E46] = 0x36;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.PC == 0x36D6);
     std::cout << "Indirect: Passed" << std::endl;
@@ -1383,7 +1397,7 @@ void ldxTest::Immediate() {
     c.mem[1] = 0xA2;
     c.mem[2] = 0x20;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.X == 0x20);
     std::cout << "Immediate: Passed" << std::endl;
@@ -1396,7 +1410,7 @@ void ldxTest::ZeroPage() {
     c.mem[2] = 0x3A;
     c.mem[0x3A] = 23;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.X == 23);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1411,7 +1425,7 @@ void ldxTest::Absolute() {
 
     c.mem[0x5332] = 10;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.X == 10);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1426,7 +1440,7 @@ void ldxTest::ZeroPageY() {
     
     c.mem[0x25] = 10;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.X == 10);
     std::cout << "ZeroPageY: Passed" << std::endl;
@@ -1442,7 +1456,7 @@ void ldxTest::AbsoluteY() {
 
     c.mem[0x5A35] = 10;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.X == 10);
     std::cout << "AbsoluteY: Passed" << std::endl;
@@ -1457,7 +1471,7 @@ void ldyTest::Immediate() {
     c.mem[1] = 0xA0;
     c.mem[2] = 0x20;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.Y == 0x20);
     std::cout << "Immediate: Passed" << std::endl;
@@ -1470,7 +1484,7 @@ void ldyTest::ZeroPage() {
     c.mem[2] = 0x3A;
     c.mem[0x3A] = 23;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.Y == 23);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1485,7 +1499,7 @@ void ldyTest::Absolute() {
 
     c.mem[0x5332] = 10;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.Y == 10);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1500,7 +1514,7 @@ void ldyTest::ZeroPageX() {
     
     c.mem[0x25] = 10;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.Y == 10);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1516,7 +1530,7 @@ void ldyTest::AbsoluteX() {
 
     c.mem[0x5A35] = 10;
 
-    driver(c, 4);
+    driver(c, false);
     
     assert(c.Y == 10);
     std::cout << "AbsoluteX: Passed" << std::endl;
@@ -1534,7 +1548,7 @@ void lsrTest::ZeroPage() {
 
     c.mem[0x30] = 0b00000001;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.mem[0x30] == 0);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1547,7 +1561,7 @@ void lsrTest::Accumulator() {
     c.A = 0b00001010;
     c.mem[1] = 0x4A;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 5);
     std::cout << "Accumulator: Passed" << std::endl;
@@ -1563,7 +1577,7 @@ void lsrTest::Absolute() {
 
     c.mem[0x2A30] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A30] == 0);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1579,7 +1593,7 @@ void lsrTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A] == 0);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1596,7 +1610,7 @@ void lsrTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00000001;
 
-    driver(c, 7);
+    driver(c, false);
     assert(c.mem[0x2C3F] == 0);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -1618,7 +1632,7 @@ void orTest::IndirectX() {
 
     c.mem[0x4023] = 0b00001111;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "IndirectX: Passed" << std::endl;
@@ -1634,7 +1648,7 @@ void orTest::ZeroPage() {
 
     c.mem[0x30] = 0b00001111;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1648,7 +1662,7 @@ void orTest::Immediate() {
     c.mem[1] = 0x09;
     c.mem[2] = 0b11110000;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "Immediate: Passed" << std::endl;
@@ -1665,7 +1679,7 @@ void orTest::Absolute() {
 
     c.mem[0x2A30] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1685,7 +1699,7 @@ void orTest::IndirectY() {
 
     c.mem[0x34D8] = 0b00001111;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.A == 255);
     std::cout << "IndirectY: Passed" << std::endl;
@@ -1702,7 +1716,7 @@ void orTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 255);
     std::cout << "ZeroPageX: Passed" << std::endl;
 }
@@ -1719,7 +1733,7 @@ void orTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 255);
     std::cout << "AbsoluteY: Passed" << std::endl;
 }
@@ -1736,7 +1750,7 @@ void orTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00001111;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 255);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -1750,7 +1764,7 @@ void pushPullTest::pha() {
     c.A = 20;
     c.mem[1] = 0x48;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.mem[0x0100 | c.S + 1] == 20);
     std::cout << "pha: Passed" << std::endl;
@@ -1768,7 +1782,7 @@ void pushPullTest::php() {
 
     c.mem[1] = 0x08;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.mem[0x0100 | c.S + 1] == 0b10110101);
     std::cout << "php: Passed" << std::endl;
@@ -1780,7 +1794,7 @@ void pushPullTest::pla() {
     c.pushStack(30);
     c.mem[1] = 0x68;
 
-    driver(c, 4);
+    driver(c, false);
     
     assert(c.A == 30);
     std::cout << "pla: Passed" << std::endl;
@@ -1792,7 +1806,7 @@ void pushPullTest::plp() {
     c.pushStack(0b11110000);
     c.mem[1] = 0x28;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.N == 1 && c.V == 1 && c.B == 1 && c.I == 0 && c.Z == 0 && c.C == 0);
     std::cout << "plp: Passed" << std::endl;
@@ -1811,7 +1825,7 @@ void rolTest::ZeroPage() {
 
     c.mem[0x30] = 0b00000001;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.mem[0x30] == 3 && c.C == 0);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1825,7 +1839,7 @@ void rolTest::Accumulator() {
     c.A = 0b00000101;
     c.mem[1] = 0x2A;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 11 && c.C == 0);
     std::cout << "Accumulator: Passed" << std::endl;
@@ -1842,7 +1856,7 @@ void rolTest::Absolute() {
 
     c.mem[0x2A30] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A30] == 3 && c.C == 0);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1859,7 +1873,7 @@ void rolTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A] == 3 && c.C == 0);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1877,7 +1891,7 @@ void rolTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00000001;
 
-    driver(c, 7);
+    driver(c, false);
     assert(c.mem[0x2C3F] == 3 && c.C == 0);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -1895,7 +1909,7 @@ void rorTest::ZeroPage() {
 
     c.mem[0x30] = 0b00000001;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.mem[0x30] == 128 && c.C == 1);
     std::cout << "ZeroPage: Passed" << std::endl;
@@ -1909,7 +1923,7 @@ void rorTest::Accumulator() {
     c.A = 0b00000001;
     c.mem[1] = 0x6A;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 128 && c.C == 1);
     std::cout << "Accumulator: Passed" << std::endl;
@@ -1926,7 +1940,7 @@ void rorTest::Absolute() {
 
     c.mem[0x2A30] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A30] == 128 && c.C == 1);
     std::cout << "Absolute: Passed" << std::endl;
@@ -1943,7 +1957,7 @@ void rorTest::ZeroPageX() {
 
     c.mem[0x2A] = 0b00000001;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.mem[0x2A] == 128 && c.C == 1);
     std::cout << "ZeroPageX: Passed" << std::endl;
@@ -1961,7 +1975,7 @@ void rorTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 0b00000001;
 
-    driver(c, 7);
+    driver(c, false);
     assert(c.mem[0x2C3F] == 128 && c.C == 1);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
@@ -1987,7 +2001,8 @@ void returnTest::rti() {
     c.mem[0x4A22] = 0x69;
     c.mem[0x4A23] = 1;
 
-    driver(c, 16);
+    // Pass true to execute the break instruction properly
+    driver(c, true);
 
     assert(c.A == 11);
     std::cout << "RTI: Passed" << std::endl;
@@ -2007,7 +2022,7 @@ void returnTest::rts() {
     // rts
     c.mem[0x6E3B] = 0x60;
 
-    driver(c, 14);
+    driver(c, false);
 
     assert(c.A == 10 && c.PC == 4);
     std::cout << "RTS: Passed" << std::endl;
@@ -2031,7 +2046,7 @@ void sbcTest::IndirectX() {
 
     c.mem[0x4023] = 1;
 
-    driver(c, 6);
+    driver(c, false);
 
     assert(c.A == 0x7E);
     assert(c.V == 1);
@@ -2050,7 +2065,7 @@ void sbcTest::ZeroPage() {
 
     c.mem[0x30] = 3;
 
-    driver(c, 3);
+    driver(c, false);
 
     assert(c.A == 0xFF);
     assert(c.V == 0);
@@ -2067,7 +2082,7 @@ void sbcTest::Immediate() {
     c.mem[1] = 0xE9;
     c.mem[2] = 0x1;
 
-    driver(c, 2);
+    driver(c, false);
 
     assert(c.A == 1);
     assert(c.V == 0);
@@ -2087,7 +2102,7 @@ void sbcTest::Absolute() {
 
     c.mem[0x2A30] = 0xFF;
 
-    driver(c, 4);
+    driver(c, false);
 
     assert(c.A == 0x80);
     assert(c.V == 1);
@@ -2112,7 +2127,7 @@ void sbcTest::IndirectY() {
 
     c.mem[0x34D8] = 0xFF;
 
-    driver(c, 5);
+    driver(c, false);
 
     assert(c.A == 0x7F);
     assert(c.V == 0);
@@ -2133,7 +2148,7 @@ void sbcTest::ZeroPageX() {
 
     c.mem[0x2A] = 1;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 9);
     assert(c.V == 0);
     assert(c.C == 1);
@@ -2153,7 +2168,7 @@ void sbcTest::AbsoluteY() {
 
     c.mem[0x2C3F] = 1;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 8);
     assert(c.V == 0);
     assert(c.C == 1);
@@ -2173,7 +2188,7 @@ void sbcTest::AbsoluteX() {
 
     c.mem[0x2C3F] = 10;
 
-    driver(c, 4);
+    driver(c, false);
     assert(c.A == 0xFA);
     assert(c.V == 0);
     assert(c.C == 0);

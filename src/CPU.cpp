@@ -16,6 +16,8 @@ CPU::CPU (u8 prg_start_low, u8 prg_start_high)
 { 
     mem = new u8[0x10000];
 
+    std::fill(mem, mem+0x10000, 0x00);
+
     // Test program to add two numbers together
     // Start at 0x0001
     /*
@@ -1036,6 +1038,7 @@ void CPU::OR () {
 
 void CPU::pha () {
     pushStack(A);
+    ++PC;
     advanceNClockCycles(3);
 }
 
@@ -1056,6 +1059,7 @@ void CPU::php () {
     status = (status << 1) | C;
 
     pushStack(status);
+    ++PC;
     advanceNClockCycles(3);
 }
 
@@ -1074,6 +1078,8 @@ void CPU::pla () {
         Z = 0;
         N = 0;
     }
+
+    ++PC;
     advanceNClockCycles(4);
 }
 
@@ -1103,6 +1109,7 @@ void CPU::plp () {
     N = status & 1;
     status = status >> 1;
 
+    ++PC;
     advanceNClockCycles(4);
 }
 

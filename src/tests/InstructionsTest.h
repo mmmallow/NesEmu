@@ -3,7 +3,7 @@
 
 #include "../CPU.h"
 
-void driver(CPU& c, int cycles);
+void driver(CPU& c, bool ignoreFirstBrk);
 
 class ldaTest {
 public:

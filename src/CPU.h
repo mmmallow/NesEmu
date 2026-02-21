@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <algorithm>
 
 class CPU;
 

@@ -3,7 +3,7 @@
 #include "tests/InstructionsTest.h"
 
 void Test() {
-    /*adcTest t;
+    sbcTest t;
     t.IndirectX();
     t.ZeroPage();
     t.Immediate();
@@ -12,10 +12,10 @@ void Test() {
     t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
-    t.AbsoluteX();*/
+    t.AbsoluteX();
 
-   /* 
-    branchTest t;
+    
+    /*branchTest t;
     t.BCC();
     t.BCS();
     t.BEQ();
@@ -32,8 +32,8 @@ void Test() {
     t.pla();
     t.plp();*/
 
-    brkTest t;
-    t.Implied();
+    /*brkTest t;
+    t.Implied();*/
 
     /*jmpTest t;
     //t.ZeroPage();
@@ -42,7 +42,7 @@ void Test() {
     //t.ZeroPageX();
     //t.AbsoluteX();
 
-/*    inXYTest t2;
+    /*inXYTest t2;
     t2.Inx();
     t2.Iny();*/
 
