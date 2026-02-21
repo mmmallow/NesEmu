@@ -1,9 +1,9 @@
 #include <iostream>
 #include "CPU.h"
-#include "tests/InstructionsTest.cpp"
+#include "tests/InstructionsTest.h"
 
 void Test() {
-    sbcTest t;
+    /*adcTest t;
     t.IndirectX();
     t.ZeroPage();
     t.Immediate();
@@ -12,7 +12,7 @@ void Test() {
     t.IndirectY();
     t.ZeroPageX();
     t.AbsoluteY();
-    t.AbsoluteX();
+    t.AbsoluteX();*/
 
    /* 
     branchTest t;
@@ -32,8 +32,8 @@ void Test() {
     t.pla();
     t.plp();*/
 
-    /*brkTest t;
-    t.Implied();*/
+    brkTest t;
+    t.Implied();
 
     /*jmpTest t;
     //t.ZeroPage();

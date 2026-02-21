@@ -1,6 +1,5 @@
 CC = g++
 CFLAGS = -g -Wall -Wextra
-
 LINKER_FLAGS = 
 
 SRC = $(shell find src -name "*.cpp")

@@ -372,7 +372,7 @@ u8* CPU::fetch() {
 * - Find number of clock cycles each addressing mode takes when fetching
 *****************/
 
-void CPU::lda (AddressingMode mode) {
+void CPU::lda () {
     u8* value = fetch();
     A = *value;
     PC++;
@@ -393,7 +393,7 @@ void CPU::lda (AddressingMode mode) {
 }
 
 
-void CPU::adc (AddressingMode mode) {
+void CPU::adc () {
     int previous_A = A;
 
     u8* value = fetch();
@@ -427,7 +427,7 @@ void CPU::adc (AddressingMode mode) {
         V = 0;
 }
 
-void CPU::AND (AddressingMode mode) {
+void CPU::AND () {
     u8* value = fetch();
     A = A & *value;
 
@@ -448,7 +448,7 @@ void CPU::AND (AddressingMode mode) {
     }
 }
 
-void CPU::asl (AddressingMode mode) {
+void CPU::asl () {
     u8* value = fetch();
     u8 previous = *value;
     *value = *value << 1;
@@ -475,7 +475,7 @@ void CPU::asl (AddressingMode mode) {
     }
 }
 
-void CPU::bcc (AddressingMode mode) {
+void CPU::bcc () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -488,7 +488,7 @@ void CPU::bcc (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::bcs (AddressingMode mode) {
+void CPU::bcs () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -501,7 +501,7 @@ void CPU::bcs (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::beq (AddressingMode mode) {
+void CPU::beq () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -514,7 +514,7 @@ void CPU::beq (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::cmp (AddressingMode mode) {
+void CPU::cmp () {
     u8* result = fetch();
 
     PC++;
@@ -542,7 +542,7 @@ void CPU::cmp (AddressingMode mode) {
     }
 }
 
-void CPU::bit (AddressingMode mode) {
+void CPU::bit () {
     u8* value = fetch();
     u8 result = *value & A;
 
@@ -573,7 +573,7 @@ void CPU::bit (AddressingMode mode) {
     }
 }
 
-void CPU::bmi (AddressingMode mode) {
+void CPU::bmi () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -586,7 +586,7 @@ void CPU::bmi (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::bne (AddressingMode mode) {
+void CPU::bne () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -599,7 +599,7 @@ void CPU::bne (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::bpl (AddressingMode mode) {
+void CPU::bpl () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -612,7 +612,7 @@ void CPU::bpl (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::brk (AddressingMode mode) {
+void CPU::brk () {
     // Only one mode, so no switch
 
     PC += 2;
@@ -648,7 +648,7 @@ void CPU::brk (AddressingMode mode) {
     advanceNClockCycles(7);
 }
 
-void CPU::bvc (AddressingMode mode) {
+void CPU::bvc () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -661,7 +661,7 @@ void CPU::bvc (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::bvs (AddressingMode mode) {
+void CPU::bvs () {
     // Only one mode, so don't need switch statement
     
     // Cast the offset to a char because it is a signed integer 
@@ -674,27 +674,27 @@ void CPU::bvs (AddressingMode mode) {
     advanceNClockCycles(2);
 }
 
-void CPU::clc (AddressingMode mode) {
+void CPU::clc () {
     // Only one mode
     C = 0;
     PC++;
     advanceNClockCycles(2);
 }
 
-void CPU::cli (AddressingMode mode) {
+void CPU::cli () {
     // Only one mode
     I = 0;
     PC++;
     advanceNClockCycles(2);
 }
 
-void CPU::clv (AddressingMode mode) {
+void CPU::clv () {
     V = 0;
     PC++;
     advanceNClockCycles(2);
 }
 
-void CPU::cpx (AddressingMode mode) {
+void CPU::cpx () {
     u8* result = fetch();
 
     PC++;
@@ -722,7 +722,7 @@ void CPU::cpx (AddressingMode mode) {
     }
 }
 
-void CPU::cpy (AddressingMode mode) {
+void CPU::cpy () {
     u8* result = fetch();
 
     PC++;
@@ -750,7 +750,7 @@ void CPU::cpy (AddressingMode mode) {
     }
 }
 
-void CPU::dec (AddressingMode mode) {
+void CPU::dec () {
     u8* result = fetch();
     *result = (*result)--;
 
@@ -770,7 +770,7 @@ void CPU::dec (AddressingMode mode) {
     }
 }
 
-void CPU::dex (AddressingMode mode) {
+void CPU::dex () {
     X--;
     advanceNClockCycles(2);
 
@@ -790,7 +790,7 @@ void CPU::dex (AddressingMode mode) {
     }
 }
 
-void CPU::dey (AddressingMode mode) {
+void CPU::dey () {
     Y--;
     advanceNClockCycles(2);
 
@@ -810,7 +810,7 @@ void CPU::dey (AddressingMode mode) {
     }
 }
 
-void CPU::eor (AddressingMode mode) {
+void CPU::eor () {
     u8* value = fetch();
     A = A ^ *value;
 
@@ -831,7 +831,7 @@ void CPU::eor (AddressingMode mode) {
     }
 }
 
-void CPU::inc (AddressingMode mode) {
+void CPU::inc () {
     u8* result = fetch();
     *result = (*result)++;
 
@@ -851,7 +851,7 @@ void CPU::inc (AddressingMode mode) {
     }
 }
 
-void CPU::inx (AddressingMode mode) {
+void CPU::inx () {
     X++;
     advanceNClockCycles(2);
 
@@ -871,7 +871,7 @@ void CPU::inx (AddressingMode mode) {
     }
 }
 
-void CPU::iny (AddressingMode mode) {
+void CPU::iny () {
     Y++;
     advanceNClockCycles(2);
 
@@ -891,13 +891,18 @@ void CPU::iny (AddressingMode mode) {
     }
 }
 
-void CPU::jmp (AddressingMode mode) {
+void CPU::jmp () {
     u16 low_byte;
     u16 high_byte;
     u16 value;
+    // This switch statement is an unfortunate side effect of
+    // the way I made the fetch method work, and because I'm
+    // a dumbass
+    u8 op_code = mem[PC];
+    AddressingMode mode = instructions[op_code].mode;
     switch (mode) {
         // Absolute
-        case 0:
+        case Absolute:
             low_byte = mem[++PC];
             high_byte = mem[++PC];
             high_byte = high_byte << 8;
@@ -906,7 +911,7 @@ void CPU::jmp (AddressingMode mode) {
             advanceNClockCycles(3);
             break;
         // Indirect
-        case 1:
+        case Indirect:
             // Set the PC to the address stored at the address given by the programmer
             low_byte = mem[++PC];
             high_byte = mem[++PC];
@@ -923,7 +928,7 @@ void CPU::jmp (AddressingMode mode) {
     }
 }
 
-void CPU::jsr (AddressingMode mode) {
+void CPU::jsr () {
     u16 low_byte = mem[++PC];
     u16 high_byte = mem[++PC];
     high_byte = high_byte << 8;
@@ -939,7 +944,7 @@ void CPU::jsr (AddressingMode mode) {
     advanceNClockCycles(6);
 }
 
-void CPU::ldx (AddressingMode mode) {
+void CPU::ldx () {
     u8* result = fetch();
     X = *result;
 
@@ -960,7 +965,7 @@ void CPU::ldx (AddressingMode mode) {
     }
 }
 
-void CPU::ldy (AddressingMode mode) {
+void CPU::ldy () {
     u8* result = fetch();
     Y = *result;
 
@@ -981,7 +986,7 @@ void CPU::ldy (AddressingMode mode) {
     }
 }
 
-void CPU::lsr (AddressingMode mode) {
+void CPU::lsr () {
     // Least significant bit gets stored in Carry flag
     u8 lsb;
     u8* result = fetch();
@@ -1004,11 +1009,11 @@ void CPU::lsr (AddressingMode mode) {
     N = 0;
 }
 
-void CPU::nop (AddressingMode mode) {
+void CPU::nop () {
     advanceNClockCycles(2);
 }
 
-void CPU::OR (AddressingMode mode) {
+void CPU::OR () {
     u8* result = fetch();
     A = A | *result;
     
@@ -1029,12 +1034,12 @@ void CPU::OR (AddressingMode mode) {
     }
 }
 
-void CPU::pha (AddressingMode mode) {
+void CPU::pha () {
     pushStack(A);
     advanceNClockCycles(3);
 }
 
-void CPU::php (AddressingMode mode) {
+void CPU::php () {
     // Form Status flags into one word
     u8 status = 0;
     status = (status << 1) | N;
@@ -1054,7 +1059,7 @@ void CPU::php (AddressingMode mode) {
     advanceNClockCycles(3);
 }
 
-void CPU::pla (AddressingMode mode) {
+void CPU::pla () {
     A = pullStack();
 
     if (A == 0) {
@@ -1072,7 +1077,7 @@ void CPU::pla (AddressingMode mode) {
     advanceNClockCycles(4);
 }
 
-void CPU::plp (AddressingMode mode) {
+void CPU::plp () {
     u8 status = pullStack();
     C = status & 1;
     status = status >> 1;
@@ -1101,7 +1106,7 @@ void CPU::plp (AddressingMode mode) {
     advanceNClockCycles(4);
 }
 
-void CPU::rol (AddressingMode mode) {
+void CPU::rol () {
     u8* value = fetch();
 
     PC++;
@@ -1126,7 +1131,7 @@ void CPU::rol (AddressingMode mode) {
     }
 }
 
-void CPU::ror (AddressingMode mode) {
+void CPU::ror () {
     u8* value = fetch();
 
     PC++;
@@ -1151,7 +1156,7 @@ void CPU::ror (AddressingMode mode) {
     }
 }
 
-void CPU::rti (AddressingMode mode) {
+void CPU::rti () {
     u8 status = pullStack();
     u8 low_byte = pullStack();
     u16 high_byte = pullStack();
@@ -1185,7 +1190,7 @@ void CPU::rti (AddressingMode mode) {
     advanceNClockCycles(6);
 }
 
-void CPU::rts (AddressingMode mode) {
+void CPU::rts () {
     u8 low_byte = pullStack();
     u16 high_byte = pullStack();
     PC = (high_byte << 8) | low_byte;
@@ -1193,15 +1198,21 @@ void CPU::rts (AddressingMode mode) {
     advanceNClockCycles(6);
 }
 
-void CPU::sbc (AddressingMode mode) {
+void CPU::sbc () {
     u8* result = fetch();
-    int previous_A = A;
     // Invert bits of result
     u16 value = (u16)*result ^ 0x00FF;
     u16 temp = (u16)A + value + (u16)C;
 
     PC++;
-    
+
+    // Credit to OneLoneCoder (https://github.com/OneLoneCoder/olcNES) for how to set these flags.
+    // I really couldn't figure it out.
+    C = temp & 0xFF00;
+    V = (temp ^ (u16)A) & (temp ^ value) & 0x0080;
+
+    A = temp & 0x00FF;
+
     if (A == 0) {
         Z = 1;
         N = 0;
@@ -1215,10 +1226,5 @@ void CPU::sbc (AddressingMode mode) {
         Z = 0;
         N = 0;
     }
-
-    C = temp & 0xFF00;
-    V = (temp ^ (u16)A) & (temp ^ value) & 0x0080;
-
-    A = temp & 0x00FF;
 }
 
