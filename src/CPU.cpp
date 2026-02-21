@@ -263,6 +263,21 @@ void CPU::init() {
     instructions[0xF5] = Instruction(&CPU::sbc, ZeroPageX);
     instructions[0xF9] = Instruction(&CPU::sbc, AbsoluteY);
     instructions[0xFd] = Instruction(&CPU::sbc, AbsoluteX);
+
+    // SEC
+    instructions[0x38] = Instruction(&CPU::sec, Implied);
+
+    // SEI
+    instructions[0x78] = Instruction(&CPU::sei, Implied);
+
+    // STA
+    instructions[0x81] = Instruction(&CPU::sta, IndirectX);
+    instructions[0x85] = Instruction(&CPU::sta, ZeroPage);
+    instructions[0x8D] = Instruction(&CPU::sta, Absolute);
+    instructions[0x91] = Instruction(&CPU::sta, IndirectY);
+    instructions[0x95] = Instruction(&CPU::sta, ZeroPageX);
+    instructions[0x99] = Instruction(&CPU::sta, AbsoluteY);
+    instructions[0x9D] = Instruction(&CPU::sta, AbsoluteX);
 }
 
 
@@ -1235,3 +1250,20 @@ void CPU::sbc () {
     }
 }
 
+void CPU::sec() {
+    C = 1;
+    ++PC;
+}
+
+void CPU::sei() {
+    I = 1;
+    ++PC;
+}
+
+void CPU::sta() {
+    u8* result = fetch();
+
+    *result = A;
+
+    ++PC;
+}

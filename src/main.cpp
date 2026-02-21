@@ -3,10 +3,10 @@
 #include "tests/InstructionsTest.h"
 
 void Test() {
-    sbcTest t;
+    staTest t;
     t.IndirectX();
     t.ZeroPage();
-    t.Immediate();
+    //t.Immediate();
     //t.Accumulator();
     t.Absolute();
     t.IndirectY();

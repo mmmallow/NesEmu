@@ -229,4 +229,15 @@ public:
     void AbsoluteX();
 };
 
+class staTest {
+public:
+    void IndirectX();
+    void ZeroPage();
+    void Absolute();
+    void IndirectY();
+    void ZeroPageX();
+    void AbsoluteY();
+    void AbsoluteX();
+};
+
 #endif

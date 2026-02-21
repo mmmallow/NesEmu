@@ -301,6 +301,16 @@ class CPU {
     // Subtract Memory from Accumulator with Borrow
     void sbc();
 
+    // Set Carry Flag
+    void sec();
+
+    // Set Interrupt Disable Flag
+    void sei();
+
+    // Store Accumulator in Memory
+    // Stores the value in A at memory location
+    void sta();
+
     /************* Instruction Set ***************
     * The instructions array holds Instruction struct containing
     * function pointers to the instruction methods and an enum for the 

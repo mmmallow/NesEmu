@@ -2194,3 +2194,116 @@ void sbcTest::AbsoluteX() {
     assert(c.C == 0);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
+
+// =========================
+// staTest
+// =========================
+void staTest::IndirectX() {
+    CPU c(1, 0);
+
+    // sta ($80, X)
+    c.A = 10;
+    c.X = 3;
+    c.mem[1] = 0x81;
+    c.mem[2] = 0x80;
+
+    // 0x80+X & 0x80+X+1 store address 0x4532
+    c.mem[0x83] = 0x32;
+    c.mem[0x84] = 0x45;
+
+    driver(c, false);
+
+    assert(c.mem[0x4532] == 10);
+    std::cout << "IndirectX: Passed" << std::endl;
+}
+
+void staTest::ZeroPage() {
+    CPU c(1, 0);
+
+    //sta $30
+    c.A = 10;
+    c.mem[1] = 0x85;
+    c.mem[2] = 0x30;
+
+    driver(c, false);
+
+    assert(c.mem[0x30] == 10);
+    std::cout << "ZeroPage: Passed" << std::endl;
+}
+
+void staTest::Absolute() {
+    CPU c(1, 0);
+
+    // sta $2A30
+    c.A = 10;
+    c.mem[1] = 0x8D;
+    c.mem[2] = 0x30;
+    c.mem[3] = 0x2A;
+
+    driver(c, false);
+
+    assert(c.mem[0x2A30] == 10);
+    std::cout << "Absolute: Passed" << std::endl;
+}
+
+void staTest::IndirectY() {
+    CPU c(1, 0);
+
+    // sta ($30), Y
+    c.A = 10;
+    c.Y = 5;
+    c.mem[1] = 0x91;
+    c.mem[2] = 0x30;
+
+    c.mem[0x30] = 0xD3;
+    c.mem[0x31] = 0x34;
+
+    driver(c, false);
+
+    assert(c.mem[0x34D8] == 10);
+    std::cout << "IndirectY: Passed" << std::endl;
+}
+
+void staTest::ZeroPageX() {
+    CPU c(1, 0);
+
+    // sta $20,X
+    c.A = 10;
+    c.X = 10;
+    c.mem[1] = 0x95;
+    c.mem[2] = 0x20;
+
+    driver(c, false);
+    assert(c.mem[0x2A] == 10);
+    std::cout << "ZeroPageX: Passed" << std::endl;
+}
+
+void staTest::AbsoluteY() {
+    CPU c(1, 0);
+
+    // sta $2C3D,Y
+    c.A = 10;
+    c.Y = 2;
+    c.mem[1] = 0x99;
+    c.mem[2] = 0x3D;
+    c.mem[3] = 0x2C;
+
+    driver(c, false);
+    assert(c.mem[0x2C3F] == 10);
+    std::cout << "AbsoluteY: Passed" << std::endl;
+}
+
+void staTest::AbsoluteX() {
+    CPU c(1, 0);
+
+    // sta $2C3D,X
+    c.A = 10;
+    c.X = 2;
+    c.mem[1] = 0x9D;
+    c.mem[2] = 0x3D;
+    c.mem[3] = 0x2C;
+
+    driver(c, false);
+    assert(c.mem[0x2C3F] == 10);
+    std::cout << "AbsoluteX: Passed" << std::endl;
+}
