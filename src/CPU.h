@@ -75,6 +75,9 @@ class CPU {
     CPU(u8 prg_start_low, u8 prg_start_high);
     ~CPU();
     
+    // Reset PC using the reset vector
+    void reset();
+
     // Sets the PC to the correct memory address to run the loaded program
     void init();
 

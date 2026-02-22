@@ -1,86 +1,55 @@
 #include <iostream>
+#include <fstream>
 #include "CPU.h"
 #include "tests/InstructionsTest.h"
 
-void Test() {
-    /*stXYTest t;
-    //t.IndirectX();
-    t.ZeroPage();
-    //t.Immediate();
-    //t.Accumulator();
-    t.Absolute();
-    //t.IndirectY();
-    t.ZeroPageX();
-    t.ZeroPageY();
-   // t.AbsoluteY();
-   // t.AbsoluteX();*/
+void loadData (CPU& c) {
+    std::string file_name("test_progs/run.6502.nes");
 
-    
-    branchTest t;
-    t.BCC();
-    t.BCS();
-    t.BEQ();
-    t.BMI();
-    t.BNE();
-    t.BPL();
-    t.BVC();
-    t.BVS();
-    t.realProgram();
+    std::ifstream file;
+    file.open(file_name, std::ios::binary);
 
-    /*pushPullTest t;
-    t.pha();
-    t.php();
-    t.pla();
-    t.plp();*/
+    if (!file) {
+        std::cerr << "Failed to open file\n";
+    }
 
-    /*brkTest t;
-    t.Implied();*/
+    // Read header
+    u8 byte;
+    for (int i = 0; i < 16; ++i) {
+        byte = file.get();
+        std::cout << "Byte " << i << ": " << std::hex << byte << std::endl;
+    }
 
-    /*jmpTest t;
-    //t.ZeroPage();
-    t.Absolute();
-    t.Indirect();*/
-    //t.ZeroPageX();
-    //t.AbsoluteX();
+    // Load PRG-ROM
+    u16 offset = 0x8000;
+    for (int i = 0; i < 0x3FFA; ++i) {
+        byte = file.get();
 
-    /*inXYTest t2;
-    t2.Inx();
-    t2.Iny();*/
+        c.mem[offset + i] = byte;
+    }
 
-    /*returnTest t;
-    t.rti();
-    t.rts();*/
+    // Load vectors
+    for (int i = 0xFFFA; i < 0xFFFF; ++i) {
+        byte = file.get();
+        c.mem[i] = byte;
+    }
 
-    /*transTest t;
-    t.tax();
-    t.tay();
-    t.tsx();
-    t.txa();
-    t.txs();
-    t.tya();*/
+    file.close();
 }
 
 int main (int argc, char* argv[]) {
-    Test();
+    CPU c(1, 0);
 
-    
-    CPU c (1, 0);
-/*
-    //lda $30
-    c.mem[1] = 0xA5;
-    c.mem[2] = 0x30;
+    loadData(c);
 
-    c.mem[0x30] = 10;
+    c.reset();
 
-    while (c.cycle < 3) {
+    while (true) {
         u8 instruction = c.mem[c.PC];
         auto instruct = c.instructions[instruction];
-        auto command = std::get<0>(instruct);
-        (c.*command)(std::get<1>(instruct));
+        auto command = instruct.instruction;
+        (c.*command)();
     }
-
-    std::cout << (int)c.A << std::endl;
-  */  
 
     return 0;
 }

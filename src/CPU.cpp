@@ -28,6 +28,16 @@ CPU::~CPU() {
     delete[] mem;
 }
 
+void CPU::reset () {
+    u16 high_byte = mem[0xFFFD];
+    u16 low_byte = mem[0xFFFC];
+
+    high_byte = high_byte << 8;
+
+    u16 program_start = high_byte | low_byte;
+    PC = program_start;
+}
+
 void CPU::init() {
     u16 high_byte = mem[0xFFFD];
     u16 low_byte = mem[0xFFFC];

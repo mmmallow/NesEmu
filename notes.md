@@ -101,3 +101,16 @@
 
 
 
+# iNES Cartridge File
+
+* 16 byte header (check wiki for full specs)
+* When loading data, have to map the given data to specified locations based on the mapper given by the file.
+
+## Mapper 0
+
+* After the header, the rest is program data
+* For this mapper, the first 16K of program data are supposed to reside in $8000-$BFFF and the second
+  16K of program data in $C000-$FFFF, if this doesn't exist then just mirror the first 16K.
+* This program data includes the nmi, reset, and irq vectors.
+  * These are located at a $3FFA offset from end of header (although it might be different if there is 32K of
+    program data, need to do more research)
