@@ -18,23 +18,6 @@ CPU::CPU (u8 prg_start_low, u8 prg_start_high)
 
     std::fill(mem, mem+0x10000, 0x00);
 
-    // Test program to add two numbers together
-    // Start at 0x0001
-    /*
-    mem[0xFFFC] = 1;
-    mem[0xFFFD] = 0;
-    
-    // lda #$10
-    mem[1] = 0xa9;
-    mem[2] = 0x0a;
-
-    // adc $10;
-    mem[3] = 0x65;
-    mem[4] = 0x0a;
-
-    mem[10] = 5;
-    */
-
     mem[0xFFFC] = prg_start_low;
     mem[0xFFFD] = prg_start_high;
 
@@ -308,6 +291,7 @@ void CPU::init() {
     instructions[0x98] = Instruction(&CPU::tya, Implied);
 }
 
+/******************* Helper Methods *******************/
 
 void CPU::advanceNClockCycles (int n) {
     for (int i = 0; i < n; ++i) {
@@ -410,12 +394,6 @@ u8* CPU::fetch() {
 }
 
 /******************* Instructions *******************/
-
-/*****************
-* TODO:
-* - Go through methods and replaces switch statements with call to fetch
-* - Find number of clock cycles each addressing mode takes when fetching
-*****************/
 
 void CPU::lda () {
     u8* value = fetch();

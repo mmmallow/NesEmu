@@ -16,7 +16,7 @@ void Test() {
    // t.AbsoluteX();*/
 
     
-    /*branchTest t;
+    branchTest t;
     t.BCC();
     t.BCS();
     t.BEQ();
@@ -25,7 +25,7 @@ void Test() {
     t.BPL();
     t.BVC();
     t.BVS();
-    t.realProgram();*/
+    t.realProgram();
 
     /*pushPullTest t;
     t.pha();
@@ -51,13 +51,13 @@ void Test() {
     t.rti();
     t.rts();*/
 
-    transTest t;
+    /*transTest t;
     t.tax();
     t.tay();
     t.tsx();
     t.txa();
     t.txs();
-    t.tya();
+    t.tya();*/
 }
 
 int main (int argc, char* argv[]) {
