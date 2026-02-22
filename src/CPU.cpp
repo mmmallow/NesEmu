@@ -278,6 +278,16 @@ void CPU::init() {
     instructions[0x95] = Instruction(&CPU::sta, ZeroPageX);
     instructions[0x99] = Instruction(&CPU::sta, AbsoluteY);
     instructions[0x9D] = Instruction(&CPU::sta, AbsoluteX);
+
+    // STX
+    instructions[0x86] = Instruction(&CPU::stx, ZeroPage);
+    instructions[0x8E] = Instruction(&CPU::stx, Absolute);
+    instructions[0x96] = Instruction(&CPU::stx, ZeroPageY);
+
+    // STY
+    instructions[0x84] = Instruction(&CPU::sty, ZeroPage);
+    instructions[0x8C] = Instruction(&CPU::sty, Absolute);
+    instructions[0x94] = Instruction(&CPU::sty, ZeroPageX);
 }
 
 
@@ -1264,6 +1274,22 @@ void CPU::sta() {
     u8* result = fetch();
 
     *result = A;
+
+    ++PC;
+}
+
+void CPU::stx() {
+    u8* result = fetch();
+
+    *result = X;
+
+    ++PC;
+}
+
+void CPU::sty() {
+    u8* result = fetch();
+
+    *result = Y;
 
     ++PC;
 }

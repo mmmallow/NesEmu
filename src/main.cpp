@@ -3,16 +3,17 @@
 #include "tests/InstructionsTest.h"
 
 void Test() {
-    staTest t;
-    t.IndirectX();
+    stXYTest t;
+    //t.IndirectX();
     t.ZeroPage();
     //t.Immediate();
     //t.Accumulator();
     t.Absolute();
-    t.IndirectY();
+    //t.IndirectY();
     t.ZeroPageX();
-    t.AbsoluteY();
-    t.AbsoluteX();
+    t.ZeroPageY();
+   // t.AbsoluteY();
+   // t.AbsoluteX();
 
     
     /*branchTest t;

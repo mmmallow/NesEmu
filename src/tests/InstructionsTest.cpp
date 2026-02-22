@@ -2307,3 +2307,76 @@ void staTest::AbsoluteX() {
     assert(c.mem[0x2C3F] == 10);
     std::cout << "AbsoluteX: Passed" << std::endl;
 }
+
+void stXYTest::ZeroPage() {
+    CPU c(1, 0);
+
+    // stx $20
+    // sty $25
+    c.X = 10;
+    c.Y = 5;
+    c.mem[1] = 0x86;
+    c.mem[2] = 0x20;
+    c.mem[3] = 0x84;
+    c.mem[4] = 0x25;
+
+    driver(c, false);
+
+    assert(c.mem[0x20] == 10);
+    std::cout << "stx ZeroPage: Passed" << std::endl;
+    assert(c.mem[0x25] == 5);
+    std::cout << "sty ZeroPage: Passed" << std::endl;
+}
+
+void stXYTest::Absolute() {
+    CPU c(1, 0);
+
+    // stx $2039
+    // sty $4029
+    c.X = 10;
+    c.Y = 5;
+    c.mem[1] = 0x8E;
+    c.mem[2] = 0x39;
+    c.mem[3] = 0x20;
+    c.mem[4] = 0x8C;
+    c.mem[5] = 0x29;
+    c.mem[6] = 0x40;
+
+    driver(c, false);
+
+    assert(c.mem[0x2039] == 10);
+    std::cout << "stx Absolute: Passed" << std::endl;
+    assert(c.mem[0x4029] == 5);
+    std::cout << "sty Absolute: Passed" << std::endl;
+}
+
+void stXYTest::ZeroPageX() {
+    CPU c(1, 0);
+
+    // sty $30,X
+    c.X = 3;
+    c.Y = 5;
+    c.mem[1] = 0x94;
+    c.mem[2] = 0x30;
+
+    driver(c, false);
+
+    assert(c.mem[0x33] == 5);
+    std::cout << "ZeroPageX: Passed" << std::endl;
+}
+
+void stXYTest::ZeroPageY() {
+    CPU c(1, 0);
+
+    // stx $30,Y
+    c.X = 10;
+    c.Y = 5;
+    c.mem[1] = 0x96;
+    c.mem[2] = 0x30;
+
+    driver(c, false);
+
+    assert(c.mem[0x35] == 10);
+    std::cout << "ZeroPageY: Passed" << std::endl;
+
+}

@@ -240,4 +240,12 @@ public:
     void AbsoluteX();
 };
 
+class stXYTest {
+public:
+    void ZeroPage();
+    void Absolute();
+    void ZeroPageX();
+    void ZeroPageY();
+};
+
 #endif

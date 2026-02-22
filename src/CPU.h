@@ -311,6 +311,14 @@ class CPU {
     // Stores the value in A at memory location
     void sta();
 
+    // Store X in Memory
+    // Stores the value in X at memory location
+    void stx();
+
+    // Store Y in Memory
+    // Stores the value in Y at memory location
+    void sty();
+
     /************* Instruction Set ***************
     * The instructions array holds Instruction struct containing
     * function pointers to the instruction methods and an enum for the 
