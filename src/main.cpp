@@ -3,7 +3,7 @@
 #include "tests/InstructionsTest.h"
 
 void Test() {
-    stXYTest t;
+    /*stXYTest t;
     //t.IndirectX();
     t.ZeroPage();
     //t.Immediate();
@@ -13,7 +13,7 @@ void Test() {
     t.ZeroPageX();
     t.ZeroPageY();
    // t.AbsoluteY();
-   // t.AbsoluteX();
+   // t.AbsoluteX();*/
 
     
     /*branchTest t;
@@ -50,6 +50,14 @@ void Test() {
     /*returnTest t;
     t.rti();
     t.rts();*/
+
+    transTest t;
+    t.tax();
+    t.tay();
+    t.tsx();
+    t.txa();
+    t.txs();
+    t.tya();
 }
 
 int main (int argc, char* argv[]) {

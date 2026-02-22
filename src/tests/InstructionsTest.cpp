@@ -2380,3 +2380,87 @@ void stXYTest::ZeroPageY() {
     std::cout << "ZeroPageY: Passed" << std::endl;
 
 }
+
+void transTest::tax() {
+    CPU c(1, 0);
+
+    // tax
+    c.A = 10;
+    c.X = 0;
+    c.mem[1] = 0xAA;
+
+    driver(c, false);
+
+    assert(c.X == c.A);
+    std::cout << "TAX: Passed" << std::endl;
+}
+
+void transTest::tay() {
+    CPU c(1, 0);
+
+    // tay
+    c.A = 10;
+    c.Y = 0;
+    c.mem[1] = 0xA8;
+
+    driver(c, false);
+
+    assert(c.Y == c.A);
+    std::cout << "TAY: Passed" << std::endl;
+}
+
+void transTest::tsx() {
+    CPU c(1, 0);
+
+    // tsx
+    c.S = 10;
+    c.X = 0;
+    c.mem[1] = 0xBA;
+
+    driver(c, false);
+
+    assert(c.X == c.S);
+    std::cout << "TSX: Passed" << std::endl;
+}
+
+void transTest::txa() {
+    CPU c(1, 0);
+
+    // txa
+    c.X = 10;
+    c.A = 0;
+    c.mem[1] = 0x8A;
+
+    driver(c, false);
+
+    assert(c.X == c.A);
+    std::cout << "TXA: Passed" << std::endl;
+}
+
+void transTest::txs() {
+    CPU c(1, 0);
+
+    // txs
+    c.X = 10;
+    c.S = 0;
+    c.mem[1] = 0x9A;
+
+    driver(c, false);
+
+    assert(c.X == c.S);
+    std::cout << "TXS: Passed" << std::endl;
+}
+
+void transTest::tya() {
+    CPU c(1, 0);
+
+    // tya
+    c.Y = 10;
+    c.A = 0;
+    c.mem[1] = 0x98;
+
+    driver(c, false);
+
+    assert(c.Y == c.A);
+    std::cout << "TYA: Passed" << std::endl;
+}

@@ -288,6 +288,24 @@ void CPU::init() {
     instructions[0x84] = Instruction(&CPU::sty, ZeroPage);
     instructions[0x8C] = Instruction(&CPU::sty, Absolute);
     instructions[0x94] = Instruction(&CPU::sty, ZeroPageX);
+
+    // TAX
+    instructions[0xAA] = Instruction(&CPU::tax, Implied);
+
+    // TAY
+    instructions[0xA8] = Instruction(&CPU::tay, Implied);
+
+    // TSX
+    instructions[0xBA] = Instruction(&CPU::tsx, Implied);
+
+    // TXA
+    instructions[0x8A] = Instruction(&CPU::txa, Implied);
+
+    // TXS
+    instructions[0x9A] = Instruction(&CPU::txs, Implied);
+
+    // TYA
+    instructions[0x98] = Instruction(&CPU::tya, Implied);
 }
 
 
@@ -1292,4 +1310,84 @@ void CPU::sty() {
     *result = Y;
 
     ++PC;
+}
+
+void CPU::tax() {
+    X = A;
+    ++PC;
+
+    if (X >= 128)
+        N = 1;
+    else
+        N = 0;
+
+    if (X == 0)
+        Z = 1;
+    else 
+        Z = 0;
+}
+
+void CPU::tay() {
+    Y = A;
+    ++PC;
+
+    if (Y >= 128)
+        N = 1;
+    else
+        N = 0;
+
+    if (Y == 0)
+        Z = 1;
+    else 
+        Z = 0;
+}
+
+void CPU::tsx() {
+    X = S;
+    ++PC;
+
+    if (X >= 128)
+        N = 1;
+    else
+        N = 0;
+
+    if (X == 0)
+        Z = 1;
+    else 
+        Z = 0;
+}
+
+void CPU::txa() {
+    A = X;
+    ++PC;
+
+    if (A >= 128)
+        N = 1;
+    else
+        N = 0;
+
+    if (A == 0)
+        Z = 1;
+    else 
+        Z = 0;
+}
+
+void CPU::txs() {
+    S = X;
+    ++PC;
+}
+
+void CPU::tya() {
+    A = Y;
+    ++PC;
+
+    if (A >= 128)
+        N = 1;
+    else
+        N = 0;
+
+    if (A == 0)
+        Z = 1;
+    else 
+        Z = 0;
 }

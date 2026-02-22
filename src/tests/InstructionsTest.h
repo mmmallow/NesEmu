@@ -248,4 +248,14 @@ public:
     void ZeroPageY();
 };
 
+class transTest {
+public:
+    void tax();
+    void tay();
+    void tsx();
+    void txa();
+    void txs();
+    void tya();
+};
+
 #endif

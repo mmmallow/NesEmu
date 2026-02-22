@@ -319,6 +319,24 @@ class CPU {
     // Stores the value in Y at memory location
     void sty();
 
+    // Transfer Accumulator to Index X
+    void tax();
+
+    // Transfer Accumulator to Index Y
+    void tay();
+
+    // Transfer Stack Pointer to X
+    void tsx();
+
+    // Transfer Index X to A
+    void txa();
+
+    // Transfer Index X to Stack Pointer
+    void txs();
+
+    // Transfer Index Y to A
+    void tya();
+
     /************* Instruction Set ***************
     * The instructions array holds Instruction struct containing
     * function pointers to the instruction methods and an enum for the 
