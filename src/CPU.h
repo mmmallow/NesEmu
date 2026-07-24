@@ -1,17 +1,10 @@
 #ifndef _CPU_H_
 #define _CPU_H_
 
-#include <cstdint>
-#include <tuple>
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include <algorithm>
+#include "Types.h"
 
+class Bus;
 class CPU;
-
-typedef unsigned char u8;
-typedef unsigned short u16;
 
 enum AddressingMode {
     IndirectX,
@@ -40,7 +33,7 @@ typedef void (CPU::*Fp)();
 * X & Y = General purpose registers
 * PC = Program Counter
 * S = Stack Pointer
-* 
+*
 * Status Flags: In the NES this is a register, P, but for simplicity
 * and saving the trouble of doing bitwise operations, just doing boolean flags.
 *
@@ -53,33 +46,50 @@ typedef void (CPU::*Fp)();
 *
 *
 * Even though the NES is an 8-bit console, it has a 16-bit address space
-* and several addressing modes. 
+* and several addressing modes.
+*
+* The CPU has no memory of its own -- all reads/writes go through the Bus
+* it's attached to, since the PPU and cartridge also live on that address
+* space (see attachBus()).
 *****************************************************************************/
 
 class CPU {
     public:
 
-
     struct Instruction {
         Fp instruction;
         AddressingMode mode;
+        // Base cycle cost (ignoring the +1 page-cross / +1-or-2 branch-taken
+        // nuances -- close enough for keeping the PPU in step, not cycle-exact).
+        u8 cycles;
 
-        Instruction() : instruction(nullptr), mode (Implied) {}
+        Instruction() : instruction(nullptr), mode (Implied), cycles(0) {}
 
-        Instruction (Fp i, AddressingMode m)
+        Instruction (Fp i, AddressingMode m, u8 c)
         : instruction(i),
-          mode (m)
+          mode (m),
+          cycles (c)
         { }
     };
-    
-    CPU(u8 prg_start_low, u8 prg_start_high);
-    ~CPU();
-    
-    // Reset PC using the reset vector
+
+    CPU();
+
+    // Wires this CPU up to the bus it reads/writes through. Must be called
+    // before reset()/step().
+    void attachBus (Bus* b) { bus = b; }
+
+    // Resets registers to their power-up state and sets PC from the reset
+    // vector ($FFFC/$FFFD), read through the bus.
     void reset();
 
-    // Sets the PC to the correct memory address to run the loaded program
-    void init();
+    // Executes exactly one instruction and returns its base cycle cost, so
+    // the Bus knows how many PPU ticks to run before the next instruction.
+    u8 step();
+
+    // Hardware NMI: pushes PC/status (without BRK's PC+2/B-flag quirks) and
+    // jumps to the vector at $FFFA/$FFFB. The Bus calls this when the PPU
+    // signals vblank with NMI enabled.
+    void nmi();
 
     /*********** Registers ***********/
     // Accumulator
@@ -99,20 +109,37 @@ class CPU {
     bool Z;
     bool C;
 
-    // Memory
-    u8* mem;
-
     // Cycle #
     int cycle;
 
-    // Current Cycle Time
-    std::chrono::time_point<std::chrono::system_clock> current_cycle_time = std::chrono::high_resolution_clock::now();
+    /************* Instruction Set ***************
+    * The instructions array holds Instruction struct containing
+    * function pointers to the instruction methods and an enum for the
+    * addressing modes of that specific instruction. Each index
+    * corresponds to the instruction at the location in the instruction
+    * table (that instruction's op code)
+    * https://www.masswerk.at/6502/6502_instruction_set.html
+    * **********************************************/
+
+    Instruction instructions[256];
+
+    private:
+
+    Bus* bus = nullptr;
 
     /************** Helper Methods **************/
+    void buildInstructionTable();
     void advanceNClockCycles (int n);
     void pushStack (u8 item);
     u8 pullStack();
-    u8* fetch();
+
+    // Resolves the current instruction's operand into a bus address,
+    // advancing PC past the operand bytes. Not valid for Accumulator,
+    // Relative, Implied, or Indirect modes -- those instructions decode
+    // their operand inline instead (see asl/lsr/rol/ror, branches, jmp/jsr).
+    u16 fetchAddress();
+    // Convenience for read-only instructions: fetchAddress() + a bus read.
+    u8 fetch();
 
     /*********** Instruction Methods ***********/
     // Load Accumulator
@@ -122,7 +149,7 @@ class CPU {
     void lda();
 
     // Add w/ Carry
-    // Adds either the value given or the value at the 
+    // Adds either the value given or the value at the
     // mem address given (addressing mode) to the accumulator
     // along with the carry bit of the status register.
     // A + M + C -> A, C
@@ -214,14 +241,14 @@ class CPU {
 
     // Decrement X by 1
     void dex();
-    
+
     // Decrement Y by 1
     void dey();
 
     // Exclusive OR Memory w/ Accumulator
     // Bitwise XORs either the value given or the value at the
     // mem address given with the accumulator, then stores
-    // the result in the accumulator. 
+    // the result in the accumulator.
     void eor();
 
     // Increment Memory by 1
@@ -283,13 +310,13 @@ class CPU {
 
     // Rotate 1 Bit Left
     // Rotates the value given or the value at the mem address given
-    // left with the Carry flag. The carry flag becomes the lsb and 
+    // left with the Carry flag. The carry flag becomes the lsb and
     // the msb becomes the carry flag.
     void rol();
 
     // Rotate 1 Bit Right
     // Rotates the value given or the value at the mem address given
-    // right with the Carry flag. The carry flag becomes the msb and 
+    // right with the Carry flag. The carry flag becomes the msb and
     // the lsb becomes the carry flag.
     void ror();
 
@@ -339,17 +366,6 @@ class CPU {
 
     // Transfer Index Y to A
     void tya();
-
-    /************* Instruction Set ***************
-    * The instructions array holds Instruction struct containing
-    * function pointers to the instruction methods and an enum for the 
-    * addressing modes of that specific instruction. Each index 
-    * corresponds to the instruction at the location in the instruction 
-    * table (that instruction's op code)
-    * https://www.masswerk.at/6502/6502_instruction_set.html
-    * **********************************************/
-
-    Instruction instructions[256];
 };
 
-#endif // _CPU_H_'
+#endif // _CPU_H_

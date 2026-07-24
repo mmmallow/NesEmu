@@ -527,8 +527,9 @@ void branchTest::BCC() {
     // different part of program where it is set to 5
     c.A = 1;
     c.mem[10] = 0x90;
-    // Two's complement negative 5
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -547,8 +548,9 @@ void branchTest::BCS() {
     c.A = 1;
     c.C = 1;
     c.mem[10] = 0xB0;
-    // Two's complement negative 5
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
     
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -565,7 +567,9 @@ void branchTest::BEQ() {
     c.Z = 1;
     c.A = 1;
     c.mem[10] = 0xF0;
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -582,7 +586,9 @@ void branchTest::BMI() {
     c.N = 1;
     c.A = 1;
     c.mem[10] = 0x30;
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -599,7 +605,9 @@ void branchTest::BNE() {
     c.Z = 0;
     c.A = 1;
     c.mem[10] = 0xD0;
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -616,7 +624,9 @@ void branchTest::BPL() {
     c.N = 0;
     c.A = 1;
     c.mem[10] = 0x10;
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -633,7 +643,9 @@ void branchTest::BVC() {
     c.V = 0;
     c.A = 1;
     c.mem[10] = 0x50;
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -650,7 +662,9 @@ void branchTest::BVS() {
     c.V = 1;
     c.A = 1;
     c.mem[10] = 0x70;
-    c.mem[11] = 0b11111011;
+    // Two's complement -7: target is 5, offset is relative to the address
+    // *after* the 2-byte branch instruction (10 + 2 + offset == 5).
+    c.mem[11] = 0b11111001;
 
     c.mem[5] = 0xA9;
     c.mem[6] = 5;
@@ -679,10 +693,10 @@ void branchTest::realProgram() {
     c.mem[4] = 6;
 
     c.mem[5] = 0xB0;
-    c.mem[6] = 0x1B;
-    
+    c.mem[6] = 0x19;
+
     c.mem[7] = 0x90;
-    c.mem[8] = 0x29;
+    c.mem[8] = 0x27;
 
     c.mem[0x20] = 0xA9;
     c.mem[0x21] = 10;
